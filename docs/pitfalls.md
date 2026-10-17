@@ -14,7 +14,12 @@
   draft/add 同理（本仓库 scripts/wx_publish.py 已固化正确写法）。
 - **字段按 UTF-8 字节限长**：title 64 字节 ≈ 21 个汉字（25 字标题 71 字节报 `45003 title size out of limit`）；author 同样紧（四个汉字 12 字节报 `45110`，两个汉字可过）。update 前先想好短标题。
 
-### 2. 检验纪律
+### 2. update 失败会把草稿清空（隐蔽事故）
+- 对一个草稿调 draft/update 时若中途报错（实测：缩略图 media_id 异常触发 `40007 invalid media_id`），**微信会先清空该草稿的 articles 再校验**——草稿变空壳，且此后对同一 media_id 的 update 持续报 40007（index 0 已无可更新文章）。
+- **恢复方法**：不要恋战，直接用最终内容 `draft/add` 新建一个草稿，再 `draft/delete` 删掉空壳旧稿即可，原 media_id 无法救回。
+- **预防**：update 前先把将要写入的封面缩略图（thumb_media_id）单独验一遍有效性；新封面素材建议用 JPG（PNG 实测可疑，未定论）。
+
+### 3. 检验纪律
 - 一切"应该好了"无效，必须 `draft/get` 拉回服务器侧内容逐项核对。
 - 乱码检验指标：`\u` 字面残留 / `Ã` 双编码 / U+FFFD 替换符 / 连续问号（`draft-get --check` 已内置）。
 - 终端显示乱码 ≠ 数据乱码：Git Bash 的 cat 对 UTF-8 按 GBK 显示是假象，以检验指标为准。
