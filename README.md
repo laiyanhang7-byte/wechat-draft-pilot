@@ -5,7 +5,7 @@
 [![CI](https://github.com/laiyanhang7-byte/wechat-draft-pilot/actions/workflows/ci.yml/badge.svg)](../../actions)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-lightgrey.svg)]()
 
-**一句话：微信公众号"排版 → 草稿箱"全自动流水线 —— Markdown 进，排版好的文章直接躺在公众号草稿箱里，发布仍由人工一键确认。**
+**微信排版一键自动化，全自动发公众号 —— Markdown 进，排版好的文章直接躺进草稿箱，人工一键确认发布。支持 Claude Code / Codex / WorkBuddy 等主流智能体接入。**
 
 ## 这解决什么问题
 
@@ -41,6 +41,43 @@ Markdown 写稿 ──► md2wechat 主题排版 ──► 自动封面 ──�
 - **配图修复**：aHash 感知哈希配对，一键修复素材接口重压缩导致的正文裂图
 - **真连验证**：`--check` 输出乱码三指标（`\u` 残留 / `Ã` 双编码 / U+FFFD），全 0 才算合格
 - **机读输出**：所有命令成功时输出 `{"ok": true, ...}`，可无缝接入自动化流水线
+
+## 在智能体 / CLI 中使用
+
+本仓库本身就是标准技能包（根目录带 `SKILL.md`），主流智能体克隆即用：
+
+### Claude Code
+
+```bash
+# 装到个人技能目录（对所有会话生效）
+git clone https://github.com/laiyanhang7-byte/wechat-draft-pilot.git ~/.claude/skills/wechat-draft-pilot
+# 或装到项目级：<项目>/.claude/skills/wechat-draft-pilot
+```
+
+之后在 Claude Code 里直接说"发公众号"、"写篇文章排好版进草稿箱"，agent 会按 SKILL.md 的流水线执行。
+
+### WorkBuddy
+
+```bash
+git clone https://github.com/laiyanhang7-byte/wechat-draft-pilot.git ~/.workbuddy/skills/wechat-draft-pilot
+```
+
+同样的触发词（发公众号 / 公众号排版 / 草稿箱…），WorkBuddy 技能体系原生兼容。
+
+### Codex / 其他 CLI 智能体
+
+```bash
+git clone https://github.com/laiyanhang7-byte/wechat-draft-pilot.git
+```
+
+把仓库路径写进你的 `AGENTS.md` / 系统提示词，或直接当 CLI 用（见下方快速开始）——所有命令输出机读 JSON，天然适配 agent 循环调用。
+
+### 环境变量（所有方式通用）
+
+```bash
+export WECHAT_APP_ID=wx你的AppID
+export WECHAT_APP_SECRET=你的AppSecret
+```
 
 ## 快速开始
 
