@@ -155,6 +155,19 @@ python scripts/wx_publish.py draft-get <media_id> --check
 
 踩到新坑？欢迎 PR 补充 [docs/pitfalls.md](docs/pitfalls.md)——这份文档靠真实案例持续生长。流程见 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
+## 支持与联系
+
+这个项目从真实公众号运营里长出来，如果它帮到了你：
+
+| 遇到问题 / 交流 | 关注公众号（更新通知 + 实战案例） | 请作者喝杯咖啡 |
+|:---:|:---:|:---:|
+| <img src="assets/wechat-qrcode.jpg" width="220"> | <img src="assets/gzh-qrcode.jpg" width="220"> | <img src="assets/alipay-qrcode.jpg" width="220"> |
+| 微信扫一扫，添加好友 | 微信扫一扫，关注公众号 | 支付宝扫一扫，金额随意，请作者喝杯奶茶 |
+
+- **遇到坑了？** 加微信备注 "wechat-draft-pilot"，把你踩的坑发我——说不定下一篇 pitfalls 就是你贡献的
+- **用得爽？** 给仓库点个 Star 就是最大的鼓励
+- **想请客？** 扫码随意，不分金额，心意到了就行
+
 ## License
 
 [MIT](LICENSE)
