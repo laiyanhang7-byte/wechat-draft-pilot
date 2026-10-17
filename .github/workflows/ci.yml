@@ -5,6 +5,10 @@ on:
     branches: [main]
   pull_request:
 
+defaults:
+  run:
+    shell: bash   # 三平台统一 bash（Windows runner 默认 pwsh，bash 语法的扫描步骤会炸）
+
 jobs:
   smoke:
     runs-on: ${{ matrix.os }}
