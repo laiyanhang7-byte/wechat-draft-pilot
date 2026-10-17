@@ -1,0 +1,7 @@
+{
+  "app_id": "在此填入你的 AppID（wx 开头）",
+  "app_secret": "在此填入你的 AppSecret（微信开发者平台 developers.weixin.qq.com 获取）",
+  "author": "默认作者名（可选，两三个汉字为佳，公众号接口按 UTF-8 字节限长）",
+  "brand_footer": "自动封面页脚落款（可选）",
+  "font_path": "C:\\Windows\\Fonts\\msyhbd.ttc（可选，自动封面字体）"
+}

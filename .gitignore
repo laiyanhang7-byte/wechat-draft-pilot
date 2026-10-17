@@ -1,0 +1,23 @@
+# 凭证与本地配置（严禁提交）
+config.json
+.env
+*.local.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# 运行时产物
+auto_cover.jpg
+*_fix.html
+svg_demo.html
+*.log
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
