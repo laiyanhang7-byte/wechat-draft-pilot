@@ -56,15 +56,17 @@
 - 文本特殊引号用数字实体（`&#8220;`）。
 - 视频/图片不用的花样：滑动翻页、擦除揭晓、多区域点击弹海报（壹伴/135 模板本质同款代码）。
 
-## 六、账号权限矩阵（未认证个人订阅号实测）
+## 六、账号权限矩阵（未认证个人订阅号实测，2026-10-12 首测 / 2026-10-17 复测一致）
 
 **✅ 可用**：草稿箱全套（add/update/get/batchget）、素材管理（图片/视频上传+查询+删除）、菜单/自动回复配置读取（get_current_selfmenu_info / get_current_autoreply_info）、账号信息。
 
-**❌ 48001 需微信认证（个人订阅号无法认证，硬墙）**：datacube 数据统计全家（阅读/涨粉/转发）、tags 标签、user 粉丝列表、qrcode 带参数二维码（渠道码）、shorturl。
+**❌ 48001 需微信认证（个人订阅号无法认证，硬墙）**：datacube 数据统计全家（阅读/涨粉/转发）、tags 标签、user 粉丝列表、qrcode 带参数二维码（渠道码）、shorturl、comment 评论管理（带 /cgi-bin 前缀时 48001）。
 
-**❌ 404 接口不存在**：comment/* 评论管理、freepublish/* 发布（未认证订阅号 API 面直接裁掉）。
+**❌ 404 接口不存在**：freepublish/* 发布（未认证订阅号 API 面直接裁掉，返回非 JSON 空响应）。
 
 **探测注意**：tags/user/qrcode/shorturl/menu 路径必须带 `/cgi-bin` 前缀（`https://api.weixin.qq.com/cgi-bin/...`），漏了返回空响应；comment/freepublish 不带前缀但未认证号直接 404。
+
+**IP 白名单坑**：get_token（access_token 获取）受 IP 白名单校验，家宽动态 IP 变动即报 `40164 invalid ip x.x.x.x, not in whitelist`——token 拿到后的其他调用不再查 IP。微信无白名单修改 API，只能人工去开发者平台改；根治方案=固定出口 IP（云服务器正向代理）。
 
 ## 七、自动发布红线（2026-04 新规，必读）
 
