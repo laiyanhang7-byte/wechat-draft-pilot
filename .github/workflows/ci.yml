@@ -28,6 +28,9 @@ jobs:
       - name: CLI smoke (--help)
         run: python scripts/wx_publish.py --help
 
+      - name: Video iframe unit tests
+        run: python tests/test_video_iframe.py
+
       - name: Secret leak scan
         run: |
           # 扫描硬编码密钥形态：32 位十六进制串被直接赋值给 secret 类变量、或明文 AppID 赋值
