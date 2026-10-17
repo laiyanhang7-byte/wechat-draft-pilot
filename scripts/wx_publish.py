@@ -67,8 +67,11 @@ def init_credentials():
     DEFAULT_AUTHOR = cfg.get("author", "小编")
     BRAND_FOOTER = cfg.get("brand_footer", "公众号自动化")
     FONT_PATH = cfg.get("font_path") or next(
-        (p for p in (r"C:\Windows\Fonts\msyhbd.ttc", r"C:\Windows\Fonts\msyh.ttc",
-                     "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc") if os.path.exists(p)), "")
+        (p for p in (r"C:\Windows\Fonts\msyhbd.ttc", r"C:\Windows\Fonts\msyh.ttc",          # Windows 微软雅黑
+                     "/System/Library/Fonts/PingFang.ttc", "/System/Library/Fonts/Hiragino Sans GB.ttc",  # macOS 苹方/冬青黑体
+                     "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc",                    # Linux 文泉驿
+                     "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc")            # Linux Noto
+         if os.path.exists(p)), "")
 
 REQUESTS_OK = True
 try:

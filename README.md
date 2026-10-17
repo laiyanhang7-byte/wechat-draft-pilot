@@ -131,6 +131,16 @@ python scripts/wx_publish.py draft-get <media_id> --check
 └── .github/workflows/ci.yml   # CI：语法检查 + 冒烟 + 密钥泄漏扫描
 ```
 
+## 平台支持（验证矩阵）
+
+| 平台 | 编译/单测/CLI | 真连发布 |
+|---|---|---|
+| Windows 10/11 | ✅ CI 实测 | ✅ 实机验证 |
+| Linux | ✅ CI 实测 | 未实测 |
+| macOS | ✅ CI 实测 | 未实测 |
+
+详细环境依赖与各平台注意事项见 [docs/INSTALL.md](docs/INSTALL.md)。
+
 ## 已知限制（诚实声明）
 
 - 未认证个人订阅号的 API 边界实测：数据统计/标签/粉丝/渠道码等接口 48001 硬墙，详见 pitfalls 第六节
