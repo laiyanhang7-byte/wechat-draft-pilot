@@ -19,6 +19,14 @@
 """
 import sys, os, json, argparse, datetime
 
+# Windows 控制台默认 cp1252/GBK，中文 --help/输出会 UnicodeEncodeError，强制 UTF-8
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        try:
+            _stream.reconfigure(encoding="utf-8")
+        except Exception:
+            pass
+
 BASE = os.path.dirname(os.path.abspath(__file__))
 
 
