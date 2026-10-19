@@ -2,6 +2,20 @@
 
 本项目遵循[语义化版本](https://semver.org/lang/zh-CN/)。格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [未发布]
+
+### 新增
+
+- **零配置演示** `examples/demo_offline.py`：不联网、不需要凭证，一条命令生成封面 + 两张 SVG 交互卡 + 可点击的预览页
+- `examples/sample-article.md`：示例稿件，覆盖表格/代码/列表三类易翻车组件
+- CI 增加「离线演示」步骤，保证示例不腐坏
+
+### 修复
+
+- **封面标题折行**：原来按固定 12 字硬切，会把词拆成两半（「公众号排版，其实可以全自 / 动」）。改为优先在标点后断开、无标点按中点断、单行超长加省略号（`split_title`，已补 7 项测试）
+- **封面在无中文字体机器上崩溃**：`make_cover` 原先直接 `ImageFont.truetype(FONT_PATH)`，字体为空时抛异常。新增 `detect_font()` / `_load_font()` / `_text_width()` 三级兜底，任何平台都能出图
+- 单测从 25 项扩到 38 项
+
 ## [1.0.0] - 2026-10-19
 
 首个正式发布版。所有 API 行为均经**真实公众号真连验证**（未认证订阅号为主），踩坑结论沉淀在 [docs/pitfalls.md](docs/pitfalls.md)。

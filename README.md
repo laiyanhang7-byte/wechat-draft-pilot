@@ -147,11 +147,28 @@ python scripts/wx_publish.py draft-get <media_id> --check
 │   ├── wx_publish.py          # 主入口：publish/update/draft-*/video-*
 │   ├── svg_cards.py           # SVG 点击展开卡 / 答题卡生成器
 │   └── fix_content_images.py  # aHash 配对修复正文裂图
+├── examples/
+│   ├── demo_offline.py        # 零配置演示：封面 + SVG 卡片 + 预览页（不联网、无凭证）
+│   └── sample-article.md      # 示例稿件（表格/代码/列表齐全）
 ├── docs/
+│   ├── INSTALL.md             # 安装、凭证、IP 白名单
 │   └── pitfalls.md            # 踩坑全集（本仓库最有价值的部分之一）
+├── tests/                     # 38 项单测，全部不触网
 ├── config.example.json
-└── .github/workflows/ci.yml   # CI：语法检查 + 冒烟 + 密钥泄漏扫描
+└── .github/workflows/ci.yml   # CI：三平台矩阵 + 单测 + 密钥泄漏扫描
 ```
+
+## 先看一眼效果（不需要凭证）
+
+不想先折腾凭证？跑一条命令就能看到封面和交互卡长什么样：
+
+```bash
+pip install -r requirements.txt
+python examples/demo_offline.py
+# 打开 examples/out/preview.html，两张卡片都能点
+```
+
+详见 [examples/README.md](examples/README.md)。
 
 ## 平台支持（验证矩阵）
 
