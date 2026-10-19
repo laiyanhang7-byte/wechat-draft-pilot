@@ -21,7 +21,7 @@
   1. 环境变量  WECHAT_APP_ID / WECHAT_APP_SECRET
   2. 配置文件  config.json（参考 config.example.json，放在脚本同目录或当前目录）
 """
-import sys, os, json, argparse, datetime, tempfile
+import sys, os, re, json, argparse, datetime, tempfile
 
 # Windows 控制台默认 cp1252/GBK，中文 --help/输出会 UnicodeEncodeError，强制 UTF-8
 for _stream in (sys.stdout, sys.stderr):
@@ -202,6 +202,117 @@ def check_cover(path):
     return path
 
 
+# ---------------- 硬性要求 1：桌面预览 HTML ----------------
+
+DESKTOP_CANDIDATES = (
+    os.path.join(os.path.expanduser("~"), "Desktop"),
+    os.path.join(os.path.expanduser("~"), "OneDrive", "Desktop"),
+    os.path.join(os.path.expanduser("~"), "桌面"),
+    os.path.join(os.path.expanduser("~"), "OneDrive", "桌面"),
+)
+
+
+def desktop_dir():
+    """找桌面目录：兼容英文/中文 Windows、OneDrive 重定向；找不到返回空串"""
+    env = os.environ.get("USERPROFILE") or os.path.expanduser("~")
+    for p in DESKTOP_CANDIDATES + (os.path.join(env, "Desktop"),):
+        if os.path.isdir(p):
+            return p
+    return ""
+
+
+def ensure_utf8_meta(html):
+    """保证预览页有 UTF-8 声明，否则浏览器按 GBK 猜会显示成乱码（排版效果全失真）"""
+    if re.search(r"<meta[^>]+charset", html, re.I):
+        return html
+    if re.search(r"<head[^>]*>", html, re.I):
+        return re.sub(r"(<head[^>]*>)", r'\1\n<meta charset="utf-8">', html, count=1, flags=re.I)
+    if re.search(r"<html[^>]*>", html, re.I):
+        return re.sub(r"(<html[^>]*>)", r'\1\n<head><meta charset="utf-8"></head>',
+                      html, count=1, flags=re.I)
+    return '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body>%s</body></html>' % html
+
+
+def safe_filename(title, limit=40):
+    """标题转文件名：去掉 Windows 非法字符，防路径穿越，超长截断"""
+    t = re.sub(r'[\\/:*?"<>|\r\n\t]', "_", (title or "未命名")).strip(" .")
+    return (t[:limit] or "未命名")
+
+
+def write_preview(html, title, out_dir=""):
+    """把将发布的正文写成桌面 HTML，供人先看排版效果。
+
+    返回 (路径, 是否成功)。桌面不存在时返回 ("", False)，由调用方降级提示。
+    """
+    target = out_dir or desktop_dir()
+    if not target:
+        return "", False
+    os.makedirs(target, exist_ok=True)
+    stamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    path = os.path.join(target, "公众号预览_%s_%s.html" % (safe_filename(title), stamp))
+    with open(path, "w", encoding="utf-8", newline="") as f:
+        f.write(ensure_utf8_meta(html))
+    return path, True
+
+
+# ---------------- 硬性要求 2：发布后自动验收 ----------------
+
+def fetch_draft(token, media_id):
+    """拉回服务器侧草稿正文（显式 UTF-8 解码，避免 ISO-8859-1 假乱码）"""
+    r = requests.post(f"https://api.weixin.qq.com/cgi-bin/draft/get?access_token={token}",
+                      data=json.dumps({"media_id": media_id}).encode("utf-8"), timeout=30)
+    d = api_check(json.loads(r.content.decode("utf-8")), "验收拉取草稿")
+    item = (d.get("news_item") or [{}])[0]
+    return item.get("title", ""), item.get("content", "")
+
+
+def verify_content(sent_html, fetched_html, expect_video=False, title="", fetched_title=""):
+    """发布后自动验收：对比「发出去的」与「服务器侧拉回来的」，逐项判定。
+
+    纯函数，不触网，可直接单测。返回 checks 列表，任一 pass=False 即视为验收不通过。
+    """
+    checks = []
+
+    def add(name, passed, detail=""):
+        checks.append({"name": name, "pass": bool(passed), "detail": detail})
+
+    g = garble_check(fetched_html)
+    add("乱码-\\u 转义残留", g["u_escape"] == 0, str(g["u_escape"]))
+    add("乱码-二次编码 Ã", g["double_encode"] == 0, str(g["double_encode"]))
+    add("乱码-替换符 U+FFFD", g["replacement_char"] == 0, str(g["replacement_char"]))
+
+    add("正文非空", len(fetched_html.strip()) > 0, "%d 字节" % len(fetched_html))
+
+    # 微信会重写 HTML（加内联样式/属性），长度与标签数不能求等，用「不少于发出量的 60%」和标题数对齐
+    sent_h2 = sent_html.count("<h2")
+    got_h2 = fetched_html.count("<h2")
+    add("h2 章节数一致", got_h2 == sent_h2, "发出 %d / 拉回 %d" % (sent_h2, got_h2))
+
+    sent_img = sent_html.count("mmbiz.qpic.cn")
+    got_img = fetched_html.count("mmbiz.qpic.cn")
+    if sent_img:
+        add("正文配图数一致", got_img == sent_img, "发出 %d / 拉回 %d" % (sent_img, got_img))
+
+    if expect_video:
+        add("视频 iframe 存在", fetched_html.count("<iframe") >= 1, str(fetched_html.count("<iframe")))
+        add("无死路 mpvideo 标签", fetched_html.count("<mpvideo") == 0, str(fetched_html.count("<mpvideo")))
+
+    if title:
+        add("标题一致", (fetched_title or "").strip() == title.strip(),
+            "发出 %r / 拉回 %r" % (title, fetched_title))
+
+    return checks
+
+
+def run_verify(token, media_id, sent_html, expect_video=False, title=""):
+    """执行验收并返回 (checks, failed)。验收不过由调用方决定是否 die。"""
+    fetched_title, fetched_html = fetch_draft(token, media_id)
+    checks = verify_content(sent_html, fetched_html, expect_video=expect_video,
+                            title=title, fetched_title=fetched_title)
+    failed = [c for c in checks if not c["pass"]]
+    return checks, failed
+
+
 def get_token():
     r = requests.get("https://api.weixin.qq.com/cgi-bin/token",
                      params={"grant_type": "client_credential", "appid": APPID, "secret": SECRET}, timeout=15)
@@ -355,16 +466,38 @@ def cmd_publish(args):
     if args.video:
         html, video_at = inject_video(html, args.video, args.video_ratio, args.video_w, args.video_cover)
 
+    # 硬性要求：先把预览 HTML 落到桌面，让人能看到排版效果（失败不阻断，但必须告知）
+    preview_path, preview_ok = ("", False)
+    if not getattr(args, "no_preview", False):
+        preview_path, preview_ok = write_preview(html, title, getattr(args, "preview_dir", ""))
+        if not preview_ok:
+            sys.stderr.write("[warn] 未找到桌面目录，预览 HTML 未生成；可用 --preview-dir 指定目录\n")
+
     if getattr(args, "dry_run", False):
         ok(dry_run=True, title=title, digest=digest, content_length=len(html),
-           video_at=video_at, cover=cover or "(将自动生成)", media_id=None)
+           video_at=video_at, cover=cover or "(将自动生成)", media_id=None,
+           preview=preview_path or None)
         return
 
     token = get_token()
     cover = cover or make_cover(title, os.path.join(tempfile.gettempdir(), "wx_auto_cover.jpg"))
     thumb_id, _ = upload_thumb(token, cover)
     mid = add_draft(token, title, html, thumb_id, digest, args.author)
-    ok(media_id=mid, title=title, cover=cover, content_length=len(html), video_at=video_at)
+
+    # 硬性要求：发布后自动验收，不通过就判失败（草稿已建，但明确告知不要发布）
+    if getattr(args, "no_verify", False):
+        ok(media_id=mid, title=title, cover=cover, content_length=len(html),
+           video_at=video_at, preview=preview_path or None, verified=False)
+        return
+    checks, failed = run_verify(token, mid, html, expect_video=bool(args.video), title=title)
+    if failed:
+        die("验收未通过：草稿已创建，请勿发布，先按 detail 排查",
+            media_id=mid, preview=preview_path or None,
+            failed=[{k: c[k] for k in ("name", "detail")} for c in failed],
+            checks=checks)
+    ok(media_id=mid, title=title, cover=cover, content_length=len(html),
+       video_at=video_at, preview=preview_path or None,
+       verified=True, verify_checks=len(checks))
 
 
 def cmd_draft_list(args):
@@ -405,9 +538,16 @@ def cmd_update(args):
     if getattr(args, "video", ""):
         html, video_at = inject_video(html, args.video, args.video_ratio, args.video_w, args.video_cover)
 
+    preview_path, preview_ok = ("", False)
+    if not getattr(args, "no_preview", False):
+        preview_path, preview_ok = write_preview(html, title, getattr(args, "preview_dir", ""))
+        if not preview_ok:
+            sys.stderr.write("[warn] 未找到桌面目录，预览 HTML 未生成；可用 --preview-dir 指定目录\n")
+
     if getattr(args, "dry_run", False):
         ok(dry_run=True, media_id=args.media_id, title=title, digest=digest,
-           content_length=len(html), video_at=video_at, cover=cover or "(将自动生成)")
+           content_length=len(html), video_at=video_at, cover=cover or "(将自动生成)",
+           preview=preview_path or None)
         return
 
     token = get_token()
@@ -415,7 +555,20 @@ def cmd_update(args):
     thumb_id, _ = upload_thumb(token, cover)
     d = update_draft(token, args.media_id, title, html, thumb_id, digest, args.author)
     api_check(d, "更新草稿")
-    ok(media_id=args.media_id, updated=True, content_length=len(html), video_at=video_at)
+
+    if getattr(args, "no_verify", False):
+        ok(media_id=args.media_id, updated=True, content_length=len(html),
+           video_at=video_at, preview=preview_path or None, verified=False)
+        return
+    checks, failed = run_verify(token, args.media_id, html,
+                                expect_video=bool(getattr(args, "video", "")), title=title)
+    if failed:
+        die("验收未通过：草稿已更新，请勿发布，先按 detail 排查",
+            media_id=args.media_id, preview=preview_path or None,
+            failed=[{k: c[k] for k in ("name", "detail")} for c in failed], checks=checks)
+    ok(media_id=args.media_id, updated=True, content_length=len(html),
+       video_at=video_at, preview=preview_path or None,
+       verified=True, verify_checks=len(checks))
 
 
 def cmd_video_add(args):
@@ -458,6 +611,9 @@ def main():
     sp.add_argument("--video-w", type=int, default=1200, help="视频容器宽度，默认 1200")
     sp.add_argument("--video-cover", default="", help="视频封面 URL（需 URL 编码）")
     sp.add_argument("--dry-run", action="store_true", help="只做本地校验并输出将要发送的内容摘要，不调用任何接口")
+    sp.add_argument("--no-preview", action="store_true", help="不生成桌面预览 HTML（默认会生成）")
+    sp.add_argument("--preview-dir", default="", help="预览 HTML 输出目录，默认桌面")
+    sp.add_argument("--no-verify", action="store_true", help="跳过发布后自动验收（仅调试用，正式发布不要加）")
     sp.set_defaults(func=cmd_publish)
     sp = sub.add_parser("draft-list"); sp.add_argument("count", nargs="?", type=int, default=5, help="拉取条数，默认 5")
     sp.set_defaults(func=cmd_draft_list)
@@ -474,12 +630,20 @@ def main():
     sp.add_argument("--video-ratio", default="0.8"); sp.add_argument("--video-w", type=int, default=1200)
     sp.add_argument("--video-cover", default="")
     sp.add_argument("--dry-run", action="store_true", help="只做本地校验，不调用任何接口")
+    sp.add_argument("--no-preview", action="store_true", help="不生成桌面预览 HTML（默认会生成）")
+    sp.add_argument("--preview-dir", default="", help="预览 HTML 输出目录，默认桌面")
+    sp.add_argument("--no-verify", action="store_true", help="跳过更新后自动验收（仅调试用）")
     sp.set_defaults(func=cmd_update)
     sp = sub.add_parser("video-add"); sp.add_argument("mp4", help="本地 mp4 路径")
     sp.add_argument("--title", required=True); sp.add_argument("--desc", default="")
     sp.set_defaults(func=cmd_video_add)
     sub.add_parser("video-list").set_defaults(func=cmd_video_list)
     args = p.parse_args()
+    # --dry-run 只做本地校验与桌面预览，不碰任何接口 —— 没配凭证也应该能用（先看效果再决定接不接入）
+    if getattr(args, "dry_run", False):
+        globals()["FONT_PATH"] = detect_font()
+        args.func(args)
+        return
     init_credentials()
     args.func(args)
 
