@@ -1,0 +1,45 @@
+{
+  "template": "cream-magazine",
+  "count": 3,
+  "assets": [
+    {
+      "url": "https://aka.doubaocdn.com/s/05mVAZ6DA7",
+      "id": "05mVAZ6DA7",
+      "file": "assets/05mVAZ6DA7.jpg",
+      "sha256": "a9d7df50777046c3af1daaf6370dd6c708503a394fdd48e3f828e66b8cb752f3",
+      "bytes": 151750,
+      "size": [
+        1400,
+        1400
+      ],
+      "count": 1,
+      "where": "side-deco s1"
+    },
+    {
+      "url": "https://aka.doubaocdn.com/s/5xKVityOgM",
+      "id": "5xKVityOgM",
+      "file": "assets/5xKVityOgM.jpg",
+      "sha256": "85eac2b53e30d641f7e1b1e2dff5dbc49cab233a2e2218dd8dab402a0c563421",
+      "bytes": 217769,
+      "size": [
+        1400,
+        788
+      ],
+      "count": 1,
+      "where": "hero"
+    },
+    {
+      "url": "https://aka.doubaocdn.com/s/KqQzK47Dc5",
+      "id": "KqQzK47Dc5",
+      "file": "assets/KqQzK47Dc5.jpg",
+      "sha256": "3cd60b0b533ba55aac7bce4215f42f2d198aedfbbd139b26db0ca034e06a2cd9",
+      "bytes": 328098,
+      "size": [
+        1400,
+        1400
+      ],
+      "count": 2,
+      "where": "magframe"
+    }
+  ]
+}

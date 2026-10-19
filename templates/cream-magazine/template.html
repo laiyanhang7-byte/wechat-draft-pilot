@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>奶油杂志风 · 文章排版模板</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' fill='%23F3E9DA'/%3E%3Ccircle cx='24' cy='24' r='16' fill='none' stroke='%23B4815F' stroke-width='3'/%3E%3Ccircle cx='24' cy='24' r='7' fill='%23B4815F'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500&display=swap">
+<style>
+:root{
+  --paper:#FDFBF7; --ink:#2E2A26; --ink-soft:#8B8278;
+  --caramel:#B4815F; --brown:#6B4F3A; --cream:#F3E9DA;
+  --line:#E7DCC9;
+  --serif:"Noto Serif SC","Songti SC",SimSun,serif;
+  --sans:"Noto Sans SC","Microsoft YaHei",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  background:var(--paper);color:var(--ink);
+  font-family:var(--serif);line-height:1.9;
+  -webkit-font-smoothing:antialiased;
+}
+:focus-visible{outline:2px solid var(--caramel);outline-offset:3px}
+.article{max-width:720px;margin:0 auto;padding:64px 32px 110px;position:relative}
+@media (max-width:560px){.article{padding:44px 22px 80px}}
+
+/* ---- 眉标 ---- */
+.kicker{
+  display:flex;align-items:center;gap:16px;justify-content:center;
+  font-family:var(--sans);font-size:11px;letter-spacing:.42em;color:var(--caramel);font-weight:500;
+}
+.kicker::before,.kicker::after{content:"";height:1px;flex:1;max-width:120px;background:var(--line)}
+@media (max-width:560px){.kicker::before,.kicker::after{max-width:50px}}
+
+/* ---- 大标题 ---- */
+.title-block{text-align:center;margin:38px auto 22px;position:relative}
+.kicker-num{
+  font-family:var(--serif);font-size:15px;letter-spacing:.3em;color:var(--brown);
+  margin-bottom:14px;
+}
+h1.title{
+  font-size:42px;font-weight:900;line-height:1.35;letter-spacing:.02em;
+  max-width:14em;margin:0 auto;
+}
+@media (max-width:560px){h1.title{font-size:30px}}
+.subtitle{
+  margin:18px auto 0;max-width:30em;
+  color:var(--ink-soft);font-size:15px;line-height:2;letter-spacing:.06em;
+}
+.meta{
+  margin-top:26px;font-family:var(--sans);font-size:12px;letter-spacing:.2em;
+  color:var(--ink-soft);display:flex;justify-content:center;gap:10px;flex-wrap:wrap;
+}
+.meta .sep{color:var(--line)}
+
+/* ---- 头图 ---- */
+.hero{margin:46px auto 0;position:relative}
+.hero img{width:100%;height:auto;display:block}
+.hero-cap{
+  margin-top:12px;display:flex;justify-content:space-between;align-items:baseline;
+  font-family:var(--sans);font-size:11.5px;letter-spacing:.18em;color:var(--ink-soft);
+  border-top:1px solid var(--line);padding-top:10px;
+}
+.hero .num{font-family:var(--serif);font-size:13px;color:var(--caramel);letter-spacing:.2em}
+
+/* ---- 导语 ---- */
+.lead{
+  margin:44px auto 0;max-width:34em;
+  font-size:20px;line-height:2.1;font-weight:600;color:var(--brown);
+  text-align:center;letter-spacing:.03em;
+}
+
+/* ---- 正文 ---- */
+p{font-size:16.5px;line-height:2.1;margin:0 0 1.5em;text-align:justify}
+.article > p:first-of-type{margin-top:36px}
+.hl{color:var(--caramel);font-weight:700}
+
+/* ---- 小标题：编号栏目 ---- */
+h2.sec{
+  margin:64px 0 26px;padding-bottom:14px;
+  border-bottom:2px solid var(--ink);
+  display:flex;align-items:baseline;gap:18px;
+}
+h2.sec .no{
+  font-family:var(--serif);font-size:34px;font-weight:900;color:var(--caramel);
+  letter-spacing:.02em;line-height:1;
+}
+h2.sec .txt{font-size:24px;font-weight:900;letter-spacing:.04em;color:var(--ink)}
+@media (max-width:560px){h2.sec .no{font-size:26px}h2.sec .txt{font-size:19px}}
+
+/* ---- 金句：大字号引用 ---- */
+.quote{
+  margin:52px auto;max-width:30em;text-align:center;
+  padding:10px 0;
+}
+.quote .qmark{
+  display:block;font-family:var(--serif);font-size:64px;line-height:.4;
+  color:var(--caramel);margin-bottom:18px;
+}
+.quote .qtext{
+  font-size:26px;font-weight:900;line-height:1.7;color:var(--brown);letter-spacing:.04em;
+}
+.quote .qsrc{margin-top:18px;font-family:var(--sans);font-size:11px;letter-spacing:.3em;color:var(--ink-soft)}
+@media (max-width:560px){.quote .qtext{font-size:20px}}
+
+/* ---- 清单 ---- */
+ul.list-note{list-style:none;margin:30px 0 44px;padding:0;border-top:1px solid var(--line)}
+ul.list-note li{
+  display:flex;gap:20px;align-items:baseline;
+  padding:20px 4px;border-bottom:1px solid var(--line);
+  font-size:16.5px;line-height:1.9;
+}
+ul.list-note li .idx{
+  font-family:var(--serif);font-size:15px;font-weight:900;color:var(--caramel);letter-spacing:.1em;flex:0 0 44px;
+}
+
+/* ---- 分隔 ---- */
+.ornament{display:flex;align-items:center;justify-content:center;gap:14px;margin:52px 0}
+.ornament::before,.ornament::after{content:"";height:1px;width:90px;background:var(--line)}
+.ornament .dot{width:7px;height:7px;border-radius:50%;background:var(--caramel)}
+
+/* ---- 配图：杂志图框 ---- */
+.figure{margin:52px 0;position:relative}
+.magframe{
+  border:8px solid var(--cream);outline:1px solid var(--line);outline-offset:-8px;
+  min-height:320px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  background:#fff;color:var(--ink-soft);padding:40px 24px;
+}
+.magframe img.deco{width:52px;height:52px;opacity:.9;border-radius:50%}
+.fig-hint{font-family:var(--sans);font-size:12px;letter-spacing:.3em}
+.fig-cap{margin-top:12px;text-align:center;font-family:var(--sans);font-size:11.5px;letter-spacing:.2em;color:var(--ink-soft)}
+
+/* ---- 结尾 ---- */
+.ending{
+  margin:60px auto 0;max-width:26em;text-align:center;
+  font-size:24px;font-weight:900;line-height:1.9;color:var(--brown);letter-spacing:.03em;
+}
+.end-mark{margin-top:26px;text-align:center;font-family:var(--sans);font-size:11px;letter-spacing:.5em;color:var(--line)}
+.footer-note{
+  margin-top:60px;padding-top:18px;border-top:1px solid var(--line);
+  display:flex;justify-content:space-between;
+  font-family:var(--sans);font-size:11px;letter-spacing:.15em;color:var(--ink-soft);
+}
+
+/* ---- 侧边点缀 ---- */
+.side-deco{position:absolute;width:56px;height:56px;opacity:.92}
+.side-deco img{width:100%;height:100%;object-fit:cover;border-radius:50%;background:#fff;box-shadow:0 4px 12px rgba(43,38,30,.10)}
+.side-deco.s1{right:-30px;top:420px;transform:rotate(8deg)}
+.side-deco.s2{left:-30px;top:1280px;transform:rotate(-10deg)}
+@media (max-width:900px){.side-deco{display:none}}
+
+/* ---- 面板 ---- */
+.tpl-btn{
+  position:fixed;right:26px;bottom:26px;z-index:60;width:52px;height:52px;border-radius:50%;
+  border:none;cursor:pointer;background:var(--caramel);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 22px rgba(180,129,95,.35);transition:transform .2s;
+}
+.tpl-btn:hover{transform:translateY(-3px)}
+.tpl-btn svg{width:22px;height:22px}
+.mask{position:fixed;inset:0;z-index:65;background:rgba(46,42,38,.2);opacity:0;pointer-events:none;transition:opacity .3s}
+.mask.show{opacity:1;pointer-events:auto}
+.panel{
+  position:fixed;top:0;right:0;z-index:70;width:330px;max-width:90vw;height:100%;
+  background:var(--paper);border-left:1px solid var(--line);
+  box-shadow:-10px 0 34px rgba(46,42,38,.12);
+  transform:translateX(105%);transition:transform .32s ease;overflow-y:auto;padding:30px 26px 48px;
+}
+.panel.open{transform:none}
+.p-close{position:absolute;top:18px;right:18px;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--ink-soft);font-size:15px}
+.p-close:hover{background:var(--cream)}
+.panel h3{font-size:19px;font-weight:900;color:var(--brown);letter-spacing:.05em}
+.p-sub{font-family:var(--sans);font-size:12px;color:var(--ink-soft);margin:6px 0}
+.p-sec{font-family:var(--sans);font-size:11px;letter-spacing:.25em;color:var(--caramel);margin:24px 0 12px;padding-bottom:7px;border-bottom:1px solid var(--line);font-weight:500}
+.cls{margin-bottom:11px;line-height:1.7}
+.cls code{font-family:Consolas,monospace;font-size:12px;background:var(--cream);color:var(--brown);border-radius:4px;padding:1px 7px}
+.cls .use{display:block;font-family:var(--sans);font-size:12px;color:var(--ink-soft);margin-top:2px}
+.sw{font-family:var(--sans);font-size:12px;color:var(--ink);line-height:2}
+.sw b{color:var(--caramel)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main class="article">
+
+  <header>
+    <div class="kicker">LIFE &middot; SLOW LIVING</div>
+    <div class="title-block">
+      <div class="kicker-num">VOL.12</div>
+      <h1 class="title">慢，是成年人最被低估的能力</h1>
+      <p class="subtitle">在凡事求快的时代，学会停下来，是一种更高级的竞争力。</p>
+      <div class="meta"><span>文 / 林间</span><span class="sep">·</span><span>2026.10.11</span><span class="sep">·</span><span>约 6 分钟</span></div>
+    </div>
+  </header>
+
+  <figure class="hero">
+    <img src="https://aka.doubaocdn.com/s/5xKVityOgM" alt="奶油色杂志风静物：一杯拿铁、一本打开的书与奶油色玫瑰">
+    <figcaption class="hero-cap"><span>AI 摄影 / 午后咖啡与书</span><span class="num">FIG.01</span></figcaption>
+  </figure>
+
+  <p class="lead">我们不是输给了不够努力，而是输给了从不允许自己歇一会儿。</p>
+
+  <p>这个时代总在教我们快：快一点成长、快一点成功、快一点抵达。于是我们把日程排满，把情绪压缩，把每一次喘息都当作浪费时间。可奇怪的是，跑得越快的人，往往越焦虑。</p>
+  <p>慢下来，不是躺平，而是把节奏调回自己手里。<span class="hl">真正的效率，从来不是比谁跑得久，而是比谁更知道何时该停。</span></p>
+
+  <h2 class="sec"><span class="no">01</span><span class="txt">先照顾好自己的呼吸</span></h2>
+  <p>忙碌的尽头，不是成就，是透支。每天给自己留十分钟，不刷手机、不赶进度，只是好好喝一杯水，看看窗外的云。你会发现，很多烦恼在慢下来之后，自己就变小了。</p>
+  <p>把「我必须」换成「我可以」，把「来不及」换成「慢慢来」。生活的答案，往往藏在你愿意停下来的时候。</p>
+
+  <blockquote class="quote">
+    <span class="qmark">“</span>
+    <p class="qtext">允许花落，允许雨来，允许事与愿违，也允许自己慢慢来。</p>
+    <span class="qsrc">— 治愈手记</span>
+  </blockquote>
+
+  <h2 class="sec"><span class="no">02</span><span class="txt">攒一点慢下来的小事</span></h2>
+  <ul class="list-note">
+    <li><span class="idx">01</span>早晨为自己泡一杯茶，看热气慢慢升起来</li>
+    <li><span class="idx">02</span>给窗台的绿植浇一次水，听泥土吸饱水的声音</li>
+    <li><span class="idx">03</span>下雨天不打伞走一小段路，让雨点落在肩上</li>
+    <li><span class="idx">04</span>睡前写下今天三件小小的好事</li>
+  </ul>
+
+  <div class="ornament"><span class="dot"></span></div>
+
+  <h2 class="sec"><span class="no">03</span><span class="txt">把日子过成一首慢歌</span></h2>
+
+  <figure class="figure">
+    <div class="magframe">
+      <img class="deco" src="https://aka.doubaocdn.com/s/KqQzK47Dc5" alt="" loading="lazy">
+      <span class="fig-hint">INSERT IMAGE · 4:3</span>
+    </div>
+    <figcaption class="fig-cap">图 / 某年某月，某处风景</figcaption>
+  </figure>
+
+  <p>日子本身没有诗意，诗意是你看它的方式。同一片晚霞，赶路的人只觉得刺眼，停下来的人却看见了温柔。愿你在匆忙的世界里，仍然保留一点慢慢来的底气。</p>
+
+  <p class="ending">愿你温柔，也有铠甲；愿你知世故，而不世故。</p>
+  <div class="end-mark">THE END</div>
+
+  <div class="footer-note"><span>SLOW LIVING · VOL.12</span><span>治愈杂志排版模板</span></div>
+</main>
+
+<span class="side-deco s1" aria-hidden="true"><img src="https://aka.doubaocdn.com/s/05mVAZ6DA7" alt="" loading="lazy"></span>
+<span class="side-deco s2" aria-hidden="true"><img src="https://aka.doubaocdn.com/s/KqQzK47Dc5" alt="" loading="lazy"></span>
+
+<button class="tpl-btn" id="tplBtn" aria-label="模板说明" aria-expanded="false">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+</button>
+<div class="mask" id="tplMask"></div>
+<aside class="panel" id="tplPanel" aria-label="模板说明" aria-hidden="true">
+  <button class="p-close" id="tplClose">×</button>
+  <h3>模板说明</h3>
+  <p class="p-sub">奶油杂志风 · 大标题杂志排版。适合深度长文、品牌内容、生活方式类文章。</p>
+  <div class="p-sec">结构与样式类</div>
+  <div class="cls"><code>.kicker</code><span class="use">眉标（英文小字 + 横线）</span></div>
+  <div class="cls"><code>h1.title</code><span class="use">超大衬线标题（900 字重）</span></div>
+  <div class="cls"><code>.subtitle</code> · <code>.meta</code><span class="use">副标题与元信息</span></div>
+  <div class="cls"><code>.lead</code><span class="use">导语（居中加粗）</span></div>
+  <div class="cls"><code>h2.sec</code><span class="use">栏目编号标题 01 / 02 / 03</span></div>
+  <div class="cls"><code>.quote</code><span class="use">超大字号金句引用</span></div>
+  <div class="cls"><code>ul.list-note</code><span class="use">分隔线清单（编号）</span></div>
+  <div class="cls"><code>.magframe</code><span class="use">杂志图框（奶油色厚框）</span></div>
+  <div class="cls"><code>.ending</code> · <code>.end-mark</code><span class="use">结尾与 THE END</span></div>
+  <div class="p-sec">配色</div>
+  <div class="sw"><b>纸白</b> #FDFBF7 ｜ <b>焦糖</b> #B4815F ｜ <b>深棕</b> #6B4F3A</div>
+  <div class="sw"><b>奶油</b> #F3E9DA ｜ <b>正文</b> #2E2A26 ｜ <b>细线</b> #E7DCC9</div>
+  <div class="p-sec">字体</div>
+  <div class="sw">标题与正文：思源宋体（Serif 900）；眉标元信息：思源黑体。离线回退宋体。</div>
+</aside>
+<script>
+(function(){var btn=document.getElementById('tplBtn'),panel=document.getElementById('tplPanel'),mask=document.getElementById('tplMask'),closeBtn=document.getElementById('tplClose');
+function open(){panel.classList.add('open');mask.classList.add('show');panel.setAttribute('aria-hidden','false');btn.setAttribute('aria-expanded','true')}
+function close(){panel.classList.remove('open');mask.classList.remove('show');panel.setAttribute('aria-hidden','true');btn.setAttribute('aria-expanded','false')}
+btn.addEventListener('click',function(){panel.classList.contains('open')?close():open()});
+closeBtn.addEventListener('click',close);mask.addEventListener('click',close);
+document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});})();
+</script>
+</body>
+</html>

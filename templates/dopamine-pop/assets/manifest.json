@@ -1,0 +1,58 @@
+{
+  "template": "dopamine-pop",
+  "count": 4,
+  "assets": [
+    {
+      "url": "https://aka.doubaocdn.com/s/3Fgfg40PJU",
+      "id": "3Fgfg40PJU",
+      "file": "assets/3Fgfg40PJU.jpg",
+      "sha256": "4dd83bc9d0b99f238b8e91de6a5cb401148d74e7051afd7987cef74415b241bb",
+      "bytes": 110041,
+      "size": [
+        1400,
+        1400
+      ],
+      "count": 3,
+      "where": "deco right"
+    },
+    {
+      "url": "https://aka.doubaocdn.com/s/QCThy8BkXZ",
+      "id": "QCThy8BkXZ",
+      "file": "assets/QCThy8BkXZ.jpg",
+      "sha256": "3774197e024b0a4929ba9d0fe91123fa6f840bac9eb7b8a8e40c4624d975e635",
+      "bytes": 126356,
+      "size": [
+        1400,
+        1400
+      ],
+      "count": 2,
+      "where": "hero"
+    },
+    {
+      "url": "https://aka.doubaocdn.com/s/hz9LBp9voK",
+      "id": "hz9LBp9voK",
+      "file": "assets/hz9LBp9voK.jpg",
+      "sha256": "15af73801308ff86de75491031ba6deb1c934e9aa54893bb3079d127248f6753",
+      "bytes": 106387,
+      "size": [
+        1400,
+        1400
+      ],
+      "count": 3,
+      "where": "sticker"
+    },
+    {
+      "url": "https://aka.doubaocdn.com/s/wTrASsUdoP",
+      "id": "wTrASsUdoP",
+      "file": "assets/wTrASsUdoP.jpg",
+      "sha256": "8ae3927b93912ac0196e72e3fa0fe7dd2eb6a092ce6fe4981ab03062913d0203",
+      "bytes": 205518,
+      "size": [
+        1400,
+        1400
+      ],
+      "count": 4,
+      "where": "deco left"
+    }
+  ]
+}

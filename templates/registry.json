@@ -1,0 +1,71 @@
+{
+  "generated_by": "templates/extract.py",
+  "count": 3,
+  "templates": [
+    {
+      "slug": "cream-magazine",
+      "name": "奶油杂志风",
+      "tagline": "大标题杂志排版，适合深度长文、品牌内容、生活方式",
+      "palette": {
+        "paper": "#FDFBF7",
+        "ink": "#2E2A26",
+        "ink-soft": "#8B8278",
+        "caramel": "#B4815F",
+        "brown": "#6B4F3A",
+        "cream": "#F3E9DA",
+        "line": "#E7DCC9"
+      },
+      "fonts": {
+        "serif": "\"Noto Serif SC\",\"Songti SC\",SimSun,serif",
+        "sans": "\"Noto Sans SC\",\"Microsoft YaHei\",sans-serif"
+      },
+      "images": 3,
+      "structure_classes": 9,
+      "wechat_issues": 6
+    },
+    {
+      "slug": "dopamine-pop",
+      "name": "多巴胺撞色风",
+      "tagline": "高饱和撞色 + 贴纸元素，适合轻松话题、活动种草",
+      "palette": {
+        "yellow": "#FFD93D",
+        "orange": "#FF9F45",
+        "pink": "#FF6B9D",
+        "blue": "#4D96FF",
+        "lime": "#7ED957",
+        "ink": "#1F2430",
+        "paper": "#FFF9EF"
+      },
+      "fonts": {
+        "hand": "\"ZCOOL KuaiLe\",\"Noto Sans SC\",sans-serif",
+        "sans": "\"Noto Sans SC\",\"Microsoft YaHei\",sans-serif"
+      },
+      "images": 4,
+      "structure_classes": 10,
+      "wechat_issues": 6
+    },
+    {
+      "slug": "forest-natural",
+      "name": "森系自然风",
+      "tagline": "低饱和草木色 + 手绘枝丫，适合治愈、自然、慢生活",
+      "palette": {
+        "paper": "#FBF7EE",
+        "ink": "#3D4A36",
+        "ink-soft": "#7C8771",
+        "leaf": "#7A9B63",
+        "moss": "#556B46",
+        "moss-deep": "#3E5232",
+        "cream": "#EFE7D6",
+        "line": "#E2DAC6"
+      },
+      "fonts": {
+        "hand": "\"Ma Shan Zheng\",\"Noto Serif SC\",serif",
+        "serif": "\"Noto Serif SC\",\"Songti SC\",SimSun,serif",
+        "sans": "\"Noto Sans SC\",\"Microsoft YaHei\",sans-serif"
+      },
+      "images": 4,
+      "structure_classes": 11,
+      "wechat_issues": 6
+    }
+  ]
+}

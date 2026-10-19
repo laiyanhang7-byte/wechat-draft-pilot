@@ -1,0 +1,191 @@
+{
+  "slug": "dopamine-pop",
+  "name": "多巴胺撞色风",
+  "tagline": "高饱和撞色 + 贴纸元素，适合轻松话题、活动种草",
+  "source": "template.html",
+  "source_sha256": "088939c961e7bedc5f1b0d7ef73824b1f4a98afe6d285e1165eb4282ce550909",
+  "source_bytes": 17742,
+  "palette": {
+    "yellow": "#FFD93D",
+    "orange": "#FF9F45",
+    "pink": "#FF6B9D",
+    "blue": "#4D96FF",
+    "lime": "#7ED957",
+    "ink": "#1F2430",
+    "paper": "#FFF9EF"
+  },
+  "fonts": {
+    "hand": "\"ZCOOL KuaiLe\",\"Noto Sans SC\",sans-serif",
+    "sans": "\"Noto Sans SC\",\"Microsoft YaHei\",sans-serif"
+  },
+  "other_vars": {},
+  "all_hex_colors": {
+    "#fff": 12,
+    "#4A4F4A": 5,
+    "#FFD93D": 2,
+    "#FF9F45": 2,
+    "#FF6B9D": 2,
+    "#4D96FF": 2,
+    "#7ED957": 2,
+    "#1F2430": 2,
+    "#FFF9EF": 1
+  },
+  "type_scale": [
+    "34px",
+    "24px",
+    "23px",
+    "22px",
+    "21px",
+    "20px",
+    "18px",
+    "17px",
+    "16.5px",
+    "16px",
+    "15px",
+    "14px",
+    "12px",
+    "11px"
+  ],
+  "font_stacks_used": [
+    "Consolas,monospace",
+    "var(--hand)",
+    "var(--sans)"
+  ],
+  "structure": [
+    {
+      "selector": "太阳 / 彩虹 / 星星 / 爱心",
+      "use": "4 款多巴胺贴纸，圆角徽章 + 粗描边",
+      "section": "AI 素材"
+    },
+    {
+      "selector": ".deco",
+      "use": "标题两侧太阳 / 星星",
+      "section": "AI 素材"
+    },
+    {
+      "selector": ".sticker",
+      "use": "头图右上角爱心贴",
+      "section": "AI 素材"
+    },
+    {
+      "selector": ".kicker",
+      "use": "眉标（撞色小方块）",
+      "section": "结构与样式类"
+    },
+    {
+      "selector": "h1.title",
+      "use": "标题 = 黄色撞色块 + 硬投影",
+      "section": "结构与样式类"
+    },
+    {
+      "selector": ".lead",
+      "use": "导语 = 粉色撞色块",
+      "section": "结构与样式类"
+    },
+    {
+      "selector": "h2.sec",
+      "use": "小标题：.yellow / .pink / .blue",
+      "section": "结构与样式类"
+    },
+    {
+      "selector": ".quote",
+      "use": "金句 = 橙色撞色块",
+      "section": "结构与样式类"
+    },
+    {
+      "selector": "ul.list-note",
+      "use": "清单行四色投影",
+      "section": "结构与样式类"
+    },
+    {
+      "selector": ".polaroid",
+      "use": "拍立得配图（青柠投影）",
+      "section": "结构与样式类"
+    }
+  ],
+  "declared_colors": [
+    {
+      "text": "亮黄 #FFD93D ｜ 橙 #FF9F45 ｜ 粉 #FF6B9D",
+      "colors": [
+        "#FFD93D",
+        "#FF9F45",
+        "#FF6B9D"
+      ]
+    },
+    {
+      "text": "蓝 #4D96FF ｜ 青柠 #7ED957 ｜ 墨 #1F2430",
+      "colors": [
+        "#4D96FF",
+        "#7ED957",
+        "#1F2430"
+      ]
+    }
+  ],
+  "declared_fonts": [
+    "标题：快乐体；正文：思源黑体加粗。图片为 AI 素材在线引用，需联网。"
+  ],
+  "images": [
+    {
+      "url": "https://aka.doubaocdn.com/s/3Fgfg40PJU",
+      "count": 3,
+      "where": "deco right",
+      "file": "assets/3Fgfg40PJU.jpg",
+      "sha256": "4dd83bc9d0b99f238b8e91de6a5cb401148d74e7051afd7987cef74415b241bb",
+      "bytes": 110041,
+      "size": [
+        1400,
+        1400
+      ]
+    },
+    {
+      "url": "https://aka.doubaocdn.com/s/QCThy8BkXZ",
+      "count": 2,
+      "where": "hero",
+      "file": "assets/QCThy8BkXZ.jpg",
+      "sha256": "3774197e024b0a4929ba9d0fe91123fa6f840bac9eb7b8a8e40c4624d975e635",
+      "bytes": 126356,
+      "size": [
+        1400,
+        1400
+      ]
+    },
+    {
+      "url": "https://aka.doubaocdn.com/s/hz9LBp9voK",
+      "count": 3,
+      "where": "sticker",
+      "file": "assets/hz9LBp9voK.jpg",
+      "sha256": "15af73801308ff86de75491031ba6deb1c934e9aa54893bb3079d127248f6753",
+      "bytes": 106387,
+      "size": [
+        1400,
+        1400
+      ]
+    },
+    {
+      "url": "https://aka.doubaocdn.com/s/wTrASsUdoP",
+      "count": 4,
+      "where": "deco left",
+      "file": "assets/wTrASsUdoP.jpg",
+      "sha256": "8ae3927b93912ac0196e72e3fa0fe7dd2eb6a092ce6fe4981ab03062913d0203",
+      "bytes": 205518,
+      "size": [
+        1400,
+        1400
+      ]
+    }
+  ],
+  "inline_svg": {
+    "(无 class)": 1
+  },
+  "external_deps": [
+    "https://miaoda.feishu.cn/fonts/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;700;900&display=swap"
+  ],
+  "wechat_issues": [
+    "含 <style> 块 —— 公众号正文会剥离，样式需内联到元素 style 属性",
+    "含外链样式表 —— 公众号不加载，需改用系统字体或内联",
+    "使用 CSS 变量 var(--x) —— 公众号不支持，需展开为具体值",
+    "含 @media 响应式规则 —— 公众号正文不生效（宽度由客户端决定）",
+    "含外链图片 —— 公众号正文会剥掉外链图，需先上传素材库换成 mmbiz 地址",
+    "含 <script> —— 公众号正文禁止脚本，交互面板需删除"
+  ]
+}

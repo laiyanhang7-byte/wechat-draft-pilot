@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>多巴胺撞色风 · 文章排版模板</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='14' fill='%23FFD93D'/%3E%3Ccircle cx='24' cy='24' r='12' fill='%23FF9F45' stroke='%231F2430' stroke-width='3'/%3E%3Ccircle cx='20' cy='22' r='2' fill='%231F2430'/%3E%3Ccircle cx='28' cy='22' r='2' fill='%231F2430'/%3E%3Cpath d='M19 28q5 5 10 0' stroke='%231F2430' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;700;900&display=swap">
+<style>
+:root{
+  --yellow:#FFD93D; --orange:#FF9F45; --pink:#FF6B9D; --blue:#4D96FF;
+  --lime:#7ED957; --ink:#1F2430; --paper:#FFF9EF;
+  --hand:"ZCOOL KuaiLe","Noto Sans SC",sans-serif;
+  --sans:"Noto Sans SC","Microsoft YaHei",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  background:var(--paper);color:var(--ink);
+  background-image:
+    radial-gradient(circle 5px at 8% 12%, rgba(255,107,157,.25), transparent 100%),
+    radial-gradient(circle 4px at 90% 8%, rgba(77,150,255,.25), transparent 100%),
+    radial-gradient(circle 6px at 85% 60%, rgba(255,217,61,.4), transparent 100%),
+    radial-gradient(circle 4px at 12% 70%, rgba(126,217,87,.3), transparent 100%),
+    radial-gradient(circle 5px at 50% 35%, rgba(255,159,69,.25), transparent 100%);
+  font-family:var(--sans);line-height:1.9;-webkit-font-smoothing:antialiased;
+}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px;border-radius:4px}
+.article{max-width:680px;margin:0 auto;padding:60px 30px 100px;position:relative}
+@media (max-width:560px){.article{padding:42px 22px 76px}}
+
+/* 通用徽章 */
+.badge{display:inline-block;flex:0 0 auto;width:54px;height:54px;border-radius:18px;overflow:hidden;background:#fff;border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);transform:rotate(-3deg)}
+.badge img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* 眉标 */
+.kicker{
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  font-family:var(--hand);font-size:16px;letter-spacing:.25em;color:var(--ink);
+}
+.kicker::before,.kicker::after{content:"";height:10px;width:34px;background:var(--yellow);border:2.5px solid var(--ink);border-radius:4px;transform:rotate(-3deg)}
+@media (max-width:560px){.kicker::before,.kicker::after{width:18px;height:8px}}
+
+/* 标题 */
+.title-row{position:relative;text-align:center;margin:34px auto 20px;max-width:14em}
+h1.title{
+  font-family:var(--hand);font-size:34px;line-height:1.45;letter-spacing:.02em;color:var(--ink);
+  display:inline-block;padding:.05em .2em;
+  background:var(--yellow);border:3px solid var(--ink);border-radius:18px 8px 20px 6px;
+  box-shadow:7px 7px 0 var(--ink);transform:rotate(-1deg);
+}
+@media (max-width:560px){h1.title{font-size:24px;box-shadow:5px 5px 0 var(--ink)}}
+.subtitle{text-align:center;font-family:var(--hand);font-size:17px;color:#4A4F4A}
+.meta{margin-top:22px;text-align:center;font-family:var(--sans);font-size:12px;font-weight:700;letter-spacing:.15em;color:#4A4F4A}
+.meta .sep{color:var(--orange);margin:0 9px}
+
+/* 标题两侧撞色块 */
+.deco{position:absolute;width:60px;height:60px;z-index:2}
+.deco img{width:100%;height:100%;object-fit:cover;border-radius:16px;background:#fff;border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink)}
+.deco.left{left:-90px;top:50%;transform:translateY(-50%) rotate(-8deg)}
+.deco.right{right:-90px;top:50%;transform:translateY(-50%) rotate(6deg)}
+@media (max-width:760px){.deco{width:46px;height:46px;top:-8px;transform:none}.deco.left{left:-6px;transform:rotate(-8deg)}.deco.right{right:-6px;transform:rotate(6deg)}}
+@media (max-width:560px){.deco.left{display:none}}
+
+/* 头图 */
+.hero{
+  margin:44px auto 0;position:relative;
+  background:var(--blue);border:3.5px solid var(--ink);border-radius:22px 8px 22px 8px;
+  padding:10px;box-shadow:9px 9px 0 var(--ink);
+}
+.hero img{width:100%;height:auto;display:block;border-radius:16px 4px 16px 4px}
+.hero .sticker{position:absolute;right:-18px;top:-20px;width:64px;height:64px;z-index:2}
+.hero .sticker img{width:100%;height:100%;object-fit:cover;border-radius:18px;background:#fff;border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);transform:rotate(8deg)}
+.hero-cap{margin-top:14px;text-align:center;font-family:var(--hand);font-size:14px;color:#4A4F4A}
+
+/* 正文 */
+p{font-size:16.5px;line-height:2.05;margin:0 0 1.35em;text-indent:2em;text-align:justify}
+.lead{
+  text-indent:0;font-size:18px;font-family:var(--hand);
+  background:var(--pink);border:3px solid var(--ink);border-radius:16px 6px 16px 6px;
+  padding:14px 20px;margin-bottom:1.8em;color:#fff;box-shadow:5px 5px 0 var(--ink);
+}
+.hl{
+  font-weight:900;color:var(--ink);
+  background:var(--lime);padding:0 .2em;border-radius:4px;
+  border:2px solid var(--ink);
+}
+
+/* 小标题：撞色贴纸卡 */
+h2.sec{
+  position:relative;display:inline-flex;align-items:center;gap:12px;
+  margin:3em 0 1.3em;padding:10px 22px 10px 10px;
+  font-family:var(--hand);font-size:23px;letter-spacing:.03em;color:var(--ink);
+  border:3px solid var(--ink);border-radius:18px 6px 18px 6px;
+  box-shadow:6px 6px 0 var(--ink);transform:rotate(-1deg);
+}
+h2.sec .badge{width:44px;height:44px;border-radius:14px}
+h2.sec.yellow{background:var(--yellow)}
+h2.sec.pink{background:var(--pink);color:#fff}
+h2.sec.blue{background:var(--blue);color:#fff}
+@media (max-width:560px){h2.sec{font-size:20px}}
+
+/* 金句：撞色块 */
+.quote{
+  margin:2.8em 0;padding:1.8em 1.6em;text-align:center;
+  background:var(--orange);border:3.5px solid var(--ink);border-radius:24px 8px 24px 8px;
+  font-family:var(--hand);font-size:21px;line-height:2;color:#fff;
+  box-shadow:8px 8px 0 var(--ink);
+}
+@media (max-width:560px){.quote{font-size:18px}}
+
+/* 清单：贴纸格 */
+ul.list-note{list-style:none;margin:1.6em 0 2.4em;padding:0}
+ul.list-note li{
+  position:relative;padding:13px 16px 13px 56px;margin-bottom:12px;
+  background:#fff;border:3px solid var(--ink);border-radius:14px 4px 14px 4px;
+  font-size:16px;font-weight:700;line-height:1.85;
+}
+ul.list-note li:nth-child(1){border-color:var(--ink);box-shadow:4px 4px 0 var(--yellow)}
+ul.list-note li:nth-child(2){box-shadow:4px 4px 0 var(--pink)}
+ul.list-note li:nth-child(3){box-shadow:4px 4px 0 var(--blue)}
+ul.list-note li:nth-child(4){box-shadow:4px 4px 0 var(--lime)}
+ul.list-note li::before{
+  content:"";position:absolute;left:10px;top:50%;transform:translateY(-50%) rotate(-4deg);
+  width:34px;height:34px;border-radius:12px;overflow:hidden;
+  background:url("https://aka.doubaocdn.com/s/wTrASsUdoP") center/cover no-repeat;
+  border:2.5px solid var(--ink);
+}
+
+/* 分隔 */
+.ornament{display:flex;align-items:center;justify-content:center;gap:14px;margin:3.2em 0}
+.ornament .bar{width:80px;height:14px;border:2.5px solid var(--ink);border-radius:6px}
+.ornament .bar.b1{background:var(--pink);transform:rotate(-4deg)}
+.ornament .bar.b2{background:var(--blue);transform:rotate(4deg)}
+.ornament .badge{width:46px;height:46px;border-radius:16px}
+
+/* 配图：拍立得撞色 */
+.figure{margin:2.8em 0}
+.polaroid{
+  position:relative;background:#fff;border:3.5px solid var(--ink);border-radius:10px;
+  padding:12px 12px 48px;box-shadow:9px 9px 0 var(--lime);
+}
+.polaroid .slot{
+  border:3px dashed var(--ink);border-radius:6px;min-height:250px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+  background:var(--yellow);padding:30px 20px;
+}
+.polaroid .slot .badge{width:62px;height:62px}
+.fig-hint{font-family:var(--hand);font-size:15px}
+.fig-cap{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-family:var(--hand);font-size:14px}
+
+/* 结尾 */
+.ending{
+  margin-top:3.2em;text-align:center;font-family:var(--hand);font-size:23px;line-height:2;
+  background:var(--yellow);border:3px solid var(--ink);border-radius:16px 6px 16px 6px;
+  padding:16px 20px;box-shadow:6px 6px 0 var(--ink);
+}
+.end-mark{margin-top:1.8em;text-align:center;font-family:var(--hand);font-size:20px;letter-spacing:.3em}
+.footer-note{margin-top:4.5em;padding-top:1.6em;border-top:3px dashed var(--ink);text-align:center;font-family:var(--sans);font-size:12px;font-weight:700;letter-spacing:.1em}
+
+/* 漂浮贴纸 */
+.float-sticker{position:absolute;width:52px;height:52px;z-index:1;pointer-events:none}
+.float-sticker img{width:100%;height:100%;object-fit:cover;border-radius:14px;background:#fff;border:2.5px solid var(--ink);box-shadow:3px 3px 0 var(--ink)}
+.float-sticker.f1{left:-78px;top:560px;transform:rotate(-10deg)}
+.float-sticker.f2{right:-78px;top:1000px;transform:rotate(9deg)}
+.float-sticker.f3{left:-78px;top:1520px;transform:rotate(7deg)}
+@media (max-width:920px){.float-sticker{display:none}}
+
+/* 面板 */
+.tpl-btn{position:fixed;right:26px;bottom:26px;z-index:60;width:56px;height:56px;border-radius:18px;border:3px solid var(--ink);cursor:pointer;background:var(--orange);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:5px 5px 0 var(--ink);transition:transform .2s}
+.tpl-btn:hover{transform:translateY(-3px) rotate(-6deg)}
+.tpl-btn svg{width:26px;height:26px}
+.mask{position:fixed;inset:0;z-index:65;background:rgba(31,36,48,.28);opacity:0;pointer-events:none;transition:opacity .3s}
+.mask.show{opacity:1;pointer-events:auto}
+.panel{position:fixed;top:0;right:0;z-index:70;width:330px;max-width:90vw;height:100%;background:var(--paper);border-left:3px solid var(--ink);box-shadow:-10px 0 34px rgba(31,36,48,.15);transform:translateX(105%);transition:transform .32s ease;overflow-y:auto;padding:30px 26px 48px}
+.panel.open{transform:none}
+.p-close{position:absolute;top:18px;right:18px;width:36px;height:36px;border-radius:12px;border:2.5px solid var(--ink);background:#fff;cursor:pointer;color:var(--ink);font-size:16px;font-weight:900}
+.p-close:hover{background:var(--yellow)}
+.panel h3{font-family:var(--hand);font-size:22px}
+.p-sub{font-family:var(--sans);font-size:12px;color:#4A4F4A;margin:6px 0}
+.p-sec{font-family:var(--sans);font-size:11px;font-weight:900;letter-spacing:.2em;color:var(--pink);margin:24px 0 12px;padding-bottom:7px;border-bottom:3px solid var(--ink)}
+.cls{margin-bottom:11px;line-height:1.7}
+.cls code{font-family:Consolas,monospace;font-size:12px;background:var(--yellow);color:var(--ink);border-radius:4px;padding:1px 7px;font-weight:700}
+.cls .use{display:block;font-family:var(--sans);font-size:12px;color:#4A4F4A;margin-top:2px}
+.sw{font-family:var(--sans);font-size:12px;font-weight:700;color:var(--ink);line-height:2}
+.sw b{color:var(--pink)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main class="article">
+
+  <header>
+    <div class="kicker">今天也要元气满满</div>
+    <div class="title-row">
+      <span class="deco left" aria-hidden="true"><img src="https://aka.doubaocdn.com/s/wTrASsUdoP" alt="" loading="lazy"></span>
+      <span class="deco right" aria-hidden="true"><img src="https://aka.doubaocdn.com/s/3Fgfg40PJU" alt="" loading="lazy"></span>
+      <h1 class="title">生活明朗，万物可爱</h1>
+    </div>
+    <p class="subtitle">给每一个普通的日子，加一点彩虹色的快乐</p>
+    <div class="meta"><span>文 / 林间</span><span class="sep">·</span><span>2026.10.11</span><span class="sep">·</span><span>阅读约 6 分钟</span></div>
+  </header>
+
+  <figure class="hero">
+    <img src="https://aka.doubaocdn.com/s/QCThy8BkXZ" alt="多巴胺风格彩虹插画">
+    <span class="sticker" aria-hidden="true"><img src="https://aka.doubaocdn.com/s/hz9LBp9voK" alt="" loading="lazy"></span>
+  </figure>
+  <figcaption class="hero-cap">AI 插画 / 彩虹心情</figcaption>
+
+  <p class="lead">心情不是天气预报，它由你决定要不要放晴。</p>
+
+  <p>成年人的快乐，常常被我们自己弄丢了。我们习惯了皱眉、习惯了赶路、习惯了把「开心」排在「有用」后面。<span class="hl">可生活不会因为你的严肃而变好，却会因为你的笑而明亮。</span></p>
+  <p>试着在今天做一件「没用但开心」的小事吧，这是送给自己的多巴胺。</p>
+
+  <h2 class="sec yellow"><span class="badge" aria-hidden="true"><img src="https://aka.doubaocdn.com/s/wTrASsUdoP" alt="" loading="lazy"></span>把快乐调成彩色</h2>
+
+  <blockquote class="quote">
+    不必事事完美，只求天天开心。坏心情来了，就给它一个大大的笑。
+  </blockquote>
+
+  <p>心情的颜色是可以自己涂的。把灰蒙蒙的「又来了」，换成亮闪闪的「没关系」。你一笑，整个世界都跟着明亮起来。</p>
+
+  <h2 class="sec pink"><span class="badge" aria-hidden="true"><img src="https://aka.doubaocdn.com/s/hz9LBp9voK" alt="" loading="lazy"></span>今日份快乐清单</h2>
+
+  <ul class="list-note">
+    <li>对着镜子笑三秒，元气自动充值</li>
+    <li>点一杯最喜欢的甜饮，慢慢喝</li>
+    <li>和朋友分享一个无厘头的梗</li>
+    <li>把今天的开心事写进手账</li>
+  </ul>
+
+  <div class="ornament" aria-hidden="true">
+    <span class="bar b1"></span>
+    <span class="badge"><img src="https://aka.doubaocdn.com/s/3Fgfg40PJU" alt="" loading="lazy"></span>
+    <span class="bar b2"></span>
+  </div>
+
+  <h2 class="sec blue"><span class="badge" aria-hidden="true"><img src="https://aka.doubaocdn.com/s/QCThy8BkXZ" alt="" loading="lazy"></span>把日子过成彩虹</h2>
+
+  <figure class="figure">
+    <div class="polaroid">
+      <div class="slot">
+        <span class="badge" aria-hidden="true"><img src="https://aka.doubaocdn.com/s/wTrASsUdoP" alt="" loading="lazy"></span>
+        <span class="fig-hint">在此处插入配图 · 4:3</span>
+      </div>
+      <figcaption class="fig-cap">图 / 某天，超级开心</figcaption>
+    </div>
+  </figure>
+
+  <p>彩虹的每一种颜色都值得被喜欢，就像你每一种情绪都值得被接纳。愿你今天的心情，自带高饱和滤镜。</p>
+
+  <p class="ending">今天也要开心呀，冲鸭！</p>
+  <div class="end-mark">✦ 完 ✦</div>
+  <p class="footer-note">多巴胺撞色风 · 文章排版模板 ｜ 右下角可查看排版说明</p>
+</main>
+
+<span class="float-sticker f1" aria-hidden="true"><img src="https://aka.doubaocdn.com/s/hz9LBp9voK" alt="" loading="lazy"></span>
+<span class="float-sticker f2" aria-hidden="true"><img src="https://aka.doubaocdn.com/s/3Fgfg40PJU" alt="" loading="lazy"></span>
+<span class="float-sticker f3" aria-hidden="true"><img src="https://aka.doubaocdn.com/s/wTrASsUdoP" alt="" loading="lazy"></span>
+
+<button class="tpl-btn" id="tplBtn" aria-label="模板说明" aria-expanded="false">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+</button>
+<div class="mask" id="tplMask"></div>
+<aside class="panel" id="tplPanel" aria-label="模板说明" aria-hidden="true">
+  <button class="p-close" id="tplClose">×</button>
+  <h3>模板说明</h3>
+  <p class="p-sub">多巴胺撞色风 · 高饱和快乐。粗黑描边 + 硬投影 + 撞色块，适合轻松、活力、种草类内容。</p>
+  <div class="p-sec">AI 素材</div>
+  <div class="cls"><code>太阳 / 彩虹 / 星星 / 爱心</code><span class="use">4 款多巴胺贴纸，圆角徽章 + 粗描边</span></div>
+  <div class="cls"><code>.deco</code><span class="use">标题两侧太阳 / 星星</span></div>
+  <div class="cls"><code>.sticker</code><span class="use">头图右上角爱心贴</span></div>
+  <div class="p-sec">结构与样式类</div>
+  <div class="cls"><code>.kicker</code><span class="use">眉标（撞色小方块）</span></div>
+  <div class="cls"><code>h1.title</code><span class="use">标题 = 黄色撞色块 + 硬投影</span></div>
+  <div class="cls"><code>.lead</code><span class="use">导语 = 粉色撞色块</span></div>
+  <div class="cls"><code>h2.sec</code><span class="use">小标题：<code style="font-size:11px">.yellow / .pink / .blue</code></span></div>
+  <div class="cls"><code>.quote</code><span class="use">金句 = 橙色撞色块</span></div>
+  <div class="cls"><code>ul.list-note</code><span class="use">清单行四色投影</span></div>
+  <div class="cls"><code>.polaroid</code><span class="use">拍立得配图（青柠投影）</span></div>
+  <div class="p-sec">配色</div>
+  <div class="sw"><b>亮黄</b> #FFD93D ｜ <b>橙</b> #FF9F45 ｜ <b>粉</b> #FF6B9D</div>
+  <div class="sw"><b>蓝</b> #4D96FF ｜ <b>青柠</b> #7ED957 ｜ <b>墨</b> #1F2430</div>
+  <div class="p-sec">字体</div>
+  <div class="sw">标题：快乐体；正文：思源黑体加粗。图片为 AI 素材在线引用，需联网。</div>
+</aside>
+<script>
+(function(){var btn=document.getElementById('tplBtn'),panel=document.getElementById('tplPanel'),mask=document.getElementById('tplMask'),closeBtn=document.getElementById('tplClose');
+function open(){panel.classList.add('open');mask.classList.add('show');panel.setAttribute('aria-hidden','false');btn.setAttribute('aria-expanded','true')}
+function close(){panel.classList.remove('open');mask.classList.remove('show');panel.setAttribute('aria-hidden','true');btn.setAttribute('aria-expanded','false')}
+btn.addEventListener('click',function(){panel.classList.contains('open')?close():open()});
+closeBtn.addEventListener('click',close);mask.addEventListener('click',close);
+document.addEventListener('keydown',function(e){if(e.key==='Escape')close()});})();
+</script>
+</body>
+</html>
