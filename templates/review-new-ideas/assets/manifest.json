@@ -1,0 +1,136 @@
+{
+  "template": "review-new-ideas",
+  "count": 10,
+  "assets": [
+    {
+      "url": "https://web2.xmyeditor.com/static/public/ewm.jpg",
+      "id": "ewm",
+      "file": "assets/ewm.jpg",
+      "sha256": "fa307598dd6e7c092c42a4766883cc5d1e980018f67ee56e984928791f63e54d",
+      "bytes": 8016,
+      "size": [
+        300,
+        300
+      ],
+      "count": 1,
+      "where": ""
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-jpg/20240307/5ce3519aa31abe4e446a1bcfcb834615.jpg",
+      "id": "5ce3519aa31abe4e446a1bcfcb834615",
+      "file": "assets/5ce3519aa31abe4e446a1bcfcb834615.jpg",
+      "sha256": "59d0b280ecfbbfed6835b255d201225a4f8960935ed0f3e6c758cb6a42d52fe5",
+      "bytes": 14549,
+      "size": [
+        396,
+        244
+      ],
+      "count": 3,
+      "where": ""
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20240307/29879b61042ece0cf5ebda4000c4cbcc.png",
+      "id": "29879b61042ece0cf5ebda4000c4cbcc",
+      "file": "assets/29879b61042ece0cf5ebda4000c4cbcc.png",
+      "sha256": "ed173567bb447711396cc4352720de41c48e0b0e52eb1828e747df3fcae7af62",
+      "bytes": 2946,
+      "size": [
+        233,
+        90
+      ],
+      "count": 1,
+      "where": ""
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20240307/4d7d7d81e69a8f484a7f47462c506066.png",
+      "id": "4d7d7d81e69a8f484a7f47462c506066",
+      "file": "assets/4d7d7d81e69a8f484a7f47462c506066.png",
+      "sha256": "5cce61c5caf66189bdb2bce005b0e234b9d6fed32d78ea5a261d1f5a681c8a7a",
+      "bytes": 3912,
+      "size": [
+        226,
+        87
+      ],
+      "count": 1,
+      "where": "xmyeditor buchai"
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20240307/9aba3b3c8b6a400ae78db008a9b0e73b.png",
+      "id": "9aba3b3c8b6a400ae78db008a9b0e73b",
+      "file": "assets/9aba3b3c8b6a400ae78db008a9b0e73b.png",
+      "sha256": "a98d91294d761373bfb630e4c1a02dd4695b2de5ebfcd38d0b4a056db5497bce",
+      "bytes": 2251,
+      "size": [
+        133,
+        112
+      ],
+      "count": 1,
+      "where": ""
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20240307/b685af2cb64225329cf23c4d8df15736.png",
+      "id": "b685af2cb64225329cf23c4d8df15736",
+      "file": "assets/b685af2cb64225329cf23c4d8df15736.png",
+      "sha256": "f193f1a3388336f634fb556031656733278b26a50bb1df2dc514ec878fd238e7",
+      "bytes": 1854,
+      "size": [
+        73,
+        128
+      ],
+      "count": 1,
+      "where": "xmyeditor buchai"
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20240307/b9ce82da356d720f0efe7baf652797cb.png",
+      "id": "b9ce82da356d720f0efe7baf652797cb",
+      "file": "assets/b9ce82da356d720f0efe7baf652797cb.png",
+      "sha256": "10154a2bef18c59571fe5822b6019fb319c5e62d4b4be81953daf64d02c74764",
+      "bytes": 1919,
+      "size": [
+        286,
+        286
+      ],
+      "count": 1,
+      "where": ""
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20240307/ea738351fc046ea0a14047d67db92cc7.png",
+      "id": "ea738351fc046ea0a14047d67db92cc7",
+      "file": "assets/ea738351fc046ea0a14047d67db92cc7.png",
+      "sha256": "f0c9952a971031c87cc0b40e2e8331116bb092b4e6ccd6d06f938cc4c1c36451",
+      "bytes": 3897,
+      "size": [
+        225,
+        87
+      ],
+      "count": 1,
+      "where": ""
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20240307/f5ce22ce54c593febe9539aa3c613ff0.png",
+      "id": "f5ce22ce54c593febe9539aa3c613ff0",
+      "file": "assets/f5ce22ce54c593febe9539aa3c613ff0.png",
+      "sha256": "fa0c790a08dc9838fddef93142b3e12e6ca9ccea73ac80a7f8b0ae84ec0c9b0f",
+      "bytes": 1162,
+      "size": [
+        103,
+        39
+      ],
+      "count": 1,
+      "where": "xmyeditor buchai"
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20240307/fecd33a30380b9dba46c76430b1e6728.png",
+      "id": "fecd33a30380b9dba46c76430b1e6728",
+      "file": "assets/fecd33a30380b9dba46c76430b1e6728.png",
+      "sha256": "5fb82ae9b1db756d2f55743d4e76d84d5e56ba404e3adaaf0bf44019deb44a0f",
+      "bytes": 6374,
+      "size": [
+        480,
+        112
+      ],
+      "count": 1,
+      "where": "xmyeditor buchai"
+    }
+  ]
+}

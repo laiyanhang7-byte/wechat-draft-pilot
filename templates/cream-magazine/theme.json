@@ -2,6 +2,7 @@
   "slug": "cream-magazine",
   "name": "奶油杂志风",
   "tagline": "大标题杂志排版，适合深度长文、品牌内容、生活方式",
+  "kind": "css-var",
   "source": "template.html",
   "source_sha256": "619ce373b390bfb815ff71c89c901a5f0d347fdc06e14f87f8c905d09ff2385f",
   "source_bytes": 14955,
@@ -18,6 +19,7 @@
     "serif": "\"Noto Serif SC\",\"Songti SC\",SimSun,serif",
     "sans": "\"Noto Sans SC\",\"Microsoft YaHei\",sans-serif"
   },
+  "font_note": "",
   "other_vars": {},
   "all_hex_colors": {
     "#fff": 4,
@@ -123,7 +125,7 @@
       "url": "https://aka.doubaocdn.com/s/05mVAZ6DA7",
       "count": 1,
       "where": "side-deco s1",
-      "file": "assets/05mVAZ6DA7.jpg",
+      "file": "assets/05mVAZ6DA7.png",
       "sha256": "a9d7df50777046c3af1daaf6370dd6c708503a394fdd48e3f828e66b8cb752f3",
       "bytes": 151750,
       "size": [
@@ -135,7 +137,7 @@
       "url": "https://aka.doubaocdn.com/s/5xKVityOgM",
       "count": 1,
       "where": "hero",
-      "file": "assets/5xKVityOgM.jpg",
+      "file": "assets/5xKVityOgM.png",
       "sha256": "85eac2b53e30d641f7e1b1e2dff5dbc49cab233a2e2218dd8dab402a0c563421",
       "bytes": 217769,
       "size": [
@@ -147,7 +149,7 @@
       "url": "https://aka.doubaocdn.com/s/KqQzK47Dc5",
       "count": 2,
       "where": "magframe",
-      "file": "assets/KqQzK47Dc5.jpg",
+      "file": "assets/KqQzK47Dc5.png",
       "sha256": "3cd60b0b533ba55aac7bce4215f42f2d198aedfbbd139b26db0ca034e06a2cd9",
       "bytes": 328098,
       "size": [

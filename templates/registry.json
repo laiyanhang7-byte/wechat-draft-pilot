@@ -1,10 +1,11 @@
 {
   "generated_by": "templates/extract.py",
-  "count": 3,
+  "count": 10,
   "templates": [
     {
       "slug": "cream-magazine",
       "name": "奶油杂志风",
+      "kind": "css-var",
       "tagline": "大标题杂志排版，适合深度长文、品牌内容、生活方式",
       "palette": {
         "paper": "#FDFBF7",
@@ -26,6 +27,7 @@
     {
       "slug": "dopamine-pop",
       "name": "多巴胺撞色风",
+      "kind": "css-var",
       "tagline": "高饱和撞色 + 贴纸元素，适合轻松话题、活动种草",
       "palette": {
         "yellow": "#FFD93D",
@@ -47,6 +49,7 @@
     {
       "slug": "forest-natural",
       "name": "森系自然风",
+      "kind": "css-var",
       "tagline": "低饱和草木色 + 手绘枝丫，适合治愈、自然、慢生活",
       "palette": {
         "paper": "#FBF7EE",
@@ -66,6 +69,143 @@
       "images": 4,
       "structure_classes": 11,
       "wechat_issues": 6
+    },
+    {
+      "slug": "chuli-fenfa",
+      "name": "踔厉奋发启新程",
+      "kind": "inline",
+      "tagline": "红金商务，适合年度总结、动员大会、开门红",
+      "palette": {
+        "c1": "#CBA276",
+        "c2": "#fff",
+        "c3": "#333",
+        "c4": "#D5AD8A",
+        "c5": "#FFFFFF",
+        "c6": "#EFAB0A",
+        "c7": "#DF853B",
+        "c8": "#415959"
+      },
+      "fonts": {},
+      "images": 11,
+      "structure_classes": 0,
+      "wechat_issues": 1
+    },
+    {
+      "slug": "light-minimal",
+      "name": "轻简设计",
+      "kind": "inline",
+      "tagline": "留白克制，适合品牌简述、产品介绍、简约风长文",
+      "palette": {
+        "c1": "#000",
+        "c2": "#F7F7F7",
+        "c3": "#79AFBE",
+        "c4": "#fff",
+        "c5": "#FEFFFF",
+        "c6": "rgb(255,255,255)",
+        "c7": "#D55A5D"
+      },
+      "fonts": {},
+      "images": 8,
+      "structure_classes": 0,
+      "wechat_issues": 1
+    },
+    {
+      "slug": "rigorous-summary",
+      "name": "严谨务实总结提升",
+      "kind": "inline",
+      "tagline": "蓝灰稳重，适合部门总结、述职报告、工作复盘",
+      "palette": {
+        "c1": "#fff",
+        "c2": "#509159",
+        "c3": "#666666",
+        "c4": "#F8B62C",
+        "c5": "#A2C3A6",
+        "c6": "#52915C",
+        "c7": "#A0C0A3",
+        "c8": "#F2F2F2"
+      },
+      "fonts": {},
+      "images": 14,
+      "structure_classes": 0,
+      "wechat_issues": 1
+    },
+    {
+      "slug": "cohesion-2024",
+      "name": "凝心聚力2024蓄力前行",
+      "kind": "inline",
+      "tagline": "红蓝撞色，适合年会、团队动员、年度规划",
+      "palette": {
+        "c1": "#D65B5B",
+        "c2": "#ECB4B4",
+        "c3": "#fff",
+        "c4": "#CB2E2E",
+        "c5": "#DB2A25",
+        "c6": "#333333",
+        "c7": "#333",
+        "c8": "#666"
+      },
+      "fonts": {},
+      "images": 14,
+      "structure_classes": 0,
+      "wechat_issues": 1
+    },
+    {
+      "slug": "review-new-ideas",
+      "name": "回顾总结启新思",
+      "kind": "inline",
+      "tagline": "暖橙复古，适合季度回顾、项目复盘、经验沉淀",
+      "palette": {
+        "c1": "#FF8736",
+        "c2": "#FFDEC7",
+        "c3": "#012459",
+        "c4": "#333",
+        "c5": "#fff",
+        "c6": "#EC7D31",
+        "c7": "rgba(255,201,164,.29)",
+        "c8": "#333333"
+      },
+      "fonts": {},
+      "images": 10,
+      "structure_classes": 0,
+      "wechat_issues": 1
+    },
+    {
+      "slug": "visual-minimal",
+      "name": "视觉极简",
+      "kind": "inline",
+      "tagline": "黑白极简，适合观点输出、深度评论、极简审美",
+      "palette": {
+        "c1": "#444444",
+        "c2": "#D69B56",
+        "c3": "#fff",
+        "c4": "#DBDBDB",
+        "c5": "#666666",
+        "c6": "rgb(0,0,0)"
+      },
+      "fonts": {},
+      "images": 6,
+      "structure_classes": 0,
+      "wechat_issues": 1
+    },
+    {
+      "slug": "year-end-summary",
+      "name": "年底工作总结",
+      "kind": "inline",
+      "tagline": "稳重商务，适合年终总结、绩效汇报、成果展示",
+      "palette": {
+        "c1": "#BECFDD",
+        "c2": "#fff",
+        "c3": "rgb(96,96,96)",
+        "c4": "rgb(80,100,148)",
+        "c5": "#FFFFFF",
+        "c6": "rgb(255,255,255)",
+        "c7": "rgb(19,15,96)",
+        "c8": "#130F60"
+      },
+      "fonts": {},
+      "images": 5,
+      "structure_classes": 0,
+      "wechat_issues": 1
     }
   ]
 }

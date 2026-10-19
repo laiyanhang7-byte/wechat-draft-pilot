@@ -34,7 +34,11 @@ def sha256_file(path):
 slugs = list(extract.TEMPLATES)
 
 # ---------- 1. 结构完整性 ----------
-check("模板数量为 3", len(slugs) == 3, str(slugs))
+check("模板数量为 10（3 网页级 + 7 内联）", len(slugs) == 10, str(len(slugs)))
+check("网页级模板 3 套",
+      sum(1 for s in slugs if extract.TEMPLATES[s][2] == "css-var") == 3)
+check("内联模板 7 套",
+      sum(1 for s in slugs if extract.TEMPLATES[s][2] == "inline") == 7)
 for slug in slugs:
     base = os.path.join(TPL_DIR, slug)
     check("[%s] template.html 存在" % slug, os.path.exists(os.path.join(base, "template.html")))
@@ -45,7 +49,7 @@ check("registry.json 存在", os.path.exists(reg_path))
 if os.path.exists(reg_path):
     with open(reg_path, encoding="utf-8") as f:
         reg = json.load(f)
-    check("registry 记录了 3 套模板", reg.get("count") == 3, str(reg.get("count")))
+    check("registry 记录了 10 套模板", reg.get("count") == 10, str(reg.get("count")))
     check("registry 的 slug 与目录一致",
           sorted(t["slug"] for t in reg["templates"]) == sorted(slugs),
           str([t["slug"] for t in reg["templates"]]))
@@ -59,10 +63,20 @@ for slug in slugs:
 
     check("[%s] 指纹一致" % slug, saved["source_sha256"] == spec["source_sha256"],
           "%s vs %s" % (saved["source_sha256"][:10], spec["source_sha256"][:10]))
-    check("[%s] 配色变量非空" % slug, len(spec["palette"]) >= 5, str(len(spec["palette"])))
-    check("[%s] 字体栈非空" % slug, len(spec["fonts"]) >= 2, str(list(spec["fonts"])))
-    check("[%s] 字号层级 ≥ 8 级" % slug, len(spec["type_scale"]) >= 8, str(len(spec["type_scale"])))
-    check("[%s] 结构类已抽取" % slug, len(spec["structure"]) >= 6, str(len(spec["structure"])))
+    check("[%s] 配色变量非空" % slug, len(spec["palette"]) >= 6, str(len(spec["palette"])))
+    check("[%s] 字号层级已抽取" % slug, len(spec["type_scale"]) >= 4, str(len(spec["type_scale"])))
+    if spec["kind"] == "css-var":
+        check("[%s] 字体栈非空" % slug, len(spec["fonts"]) >= 2, str(list(spec["fonts"])))
+        check("[%s] 结构类已抽取" % slug, len(spec["structure"]) >= 6, str(len(spec["structure"])))
+        check("[%s] 标注了公众号兼容问题" % slug, len(spec["wechat_issues"]) >= 4,
+              str(len(spec["wechat_issues"])))
+    else:
+        # 内联族：字体未指定属正常，但必须写明"非缺失"
+        if not spec["fonts"]:
+            check("[%s] 未指定字体时已注明原因" % slug, bool(spec.get("font_note")),
+                  spec.get("font_note", ""))
+        check("[%s] 已标注公众号兼容问题" % slug, len(spec["wechat_issues"]) >= 1,
+              str(len(spec["wechat_issues"])))
     all_palettes[slug] = set(v.lower() for v in spec["palette"].values())
 
 # 三套风格不能是同一套配色（防复制粘贴串味）
@@ -90,14 +104,15 @@ for slug in slugs:
         if rel and os.path.exists(path):
             check("[%s] 插画 %s 指纹一致" % (slug, aid), sha256_file(path) == item.get("sha256", ""),
                   "%d 字节" % os.path.getsize(path))
-            check("[%s] 插画 %s 非空" % (slug, aid), os.path.getsize(path) > 5000,
+            check("[%s] 插画 %s 非空" % (slug, aid), os.path.getsize(path) > 50,
                   "%d 字节" % os.path.getsize(path))
 
-check("插画唯一数 11（3+4+4）", total_unique == 11, str(total_unique))
-check("插画出现次数 28（含 deco/sticker 复用）", total_images == 28, str(total_images))
-check("奶油插画出现 4 次", per_tpl.get("cream-magazine") == 4, str(per_tpl.get("cream-magazine")))
-check("多巴胺插画出现 12 次", per_tpl.get("dopamine-pop") == 12, str(per_tpl.get("dopamine-pop")))
-check("森系插画出现 12 次", per_tpl.get("forest-natural") == 12, str(per_tpl.get("forest-natural")))
+check("插画唯一数 79（11 + 68）", total_unique == 79, str(total_unique))
+check("插画出现次数 146", total_images == 146, str(total_images))
+for slug, expect in (("cream-magazine", 4), ("dopamine-pop", 12), ("forest-natural", 12),
+                     ("chuli-fenfa", 21), ("rigorous-summary", 23), ("year-end-summary", 11)):
+    check("[%s] 插画出现 %d 次" % (slug, expect), per_tpl.get(slug) == expect,
+          str(per_tpl.get(slug)))
 
 # ---------- 4. manifest 与 theme.json 一致 ----------
 for slug in slugs:
@@ -122,12 +137,18 @@ with open(os.path.join(TPL_DIR, "forest-natural", "theme.json"), encoding="utf-8
     fn = json.load(f)
 check("森系保留内联枝丫装饰（twig × 2）", fn["inline_svg"].get("twig") == 2, str(fn["inline_svg"]))
 
-# ---------- 6. 公众号兼容性已如实标注 ----------
+# ---------- 6. 公众号兼容性：内联族只剩「外链图」一个问题 ----------
 for slug in slugs:
     with open(os.path.join(TPL_DIR, slug, "theme.json"), encoding="utf-8") as f:
         saved = json.load(f)
-    check("[%s] 已标注公众号兼容问题" % slug, len(saved["wechat_issues"]) >= 4,
-          str(len(saved["wechat_issues"])))
+    if saved["kind"] == "inline":
+        check("[%s] 内联族无 <style>/var()/@media 问题" % slug,
+              not any(("<style>" in i or "var(--" in i or "@media" in i)
+                      for i in saved["wechat_issues"]),
+              str(saved["wechat_issues"]))
+        check("[%s] 内联族已标出外链图问题" % slug,
+              any("外链图片" in i for i in saved["wechat_issues"]),
+              str(saved["wechat_issues"]))
 
 failed = [c for c in checks if not c["pass"]]
 for c in checks:

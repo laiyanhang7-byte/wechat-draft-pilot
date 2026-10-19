@@ -1,0 +1,188 @@
+{
+  "slug": "review-new-ideas",
+  "name": "回顾总结启新思",
+  "tagline": "暖橙复古，适合季度回顾、项目复盘、经验沉淀",
+  "kind": "inline",
+  "source": "template.html",
+  "source_sha256": "3236214e99f617d96d3467169d2f336a40c00d68f93a6bcab565c228622de00f",
+  "source_bytes": 33151,
+  "palette": {
+    "c1": "#FF8736",
+    "c2": "#FFDEC7",
+    "c3": "#012459",
+    "c4": "#333",
+    "c5": "#fff",
+    "c6": "#EC7D31",
+    "c7": "rgba(255,201,164,.29)",
+    "c8": "#333333"
+  },
+  "fonts": {},
+  "font_note": "模板未在样式中指定 font-family，使用公众号默认字体（非缺失）",
+  "other_vars": {},
+  "all_hex_colors": {
+    "rgb(255,251,248)": 2,
+    "#012459": 10,
+    "#FF8736": 51,
+    "#EC7D31": 4,
+    "#002358": 2,
+    "#333333": 3,
+    "rgb(255,201,164,.29)": 1,
+    "#FFFFFF": 1,
+    "#EAEAEB": 1,
+    "#FFDEC7": 16,
+    "#fff": 6,
+    "#333": 10,
+    "rgba(255,201,164,.29)": 4
+  },
+  "type_scale": [
+    "30px",
+    "14px",
+    "13px",
+    "18px",
+    "16px",
+    "36px",
+    "26px"
+  ],
+  "font_stacks_used": [],
+  "structure": [],
+  "declared_colors": [],
+  "declared_fonts": [],
+  "images": [
+    {
+      "url": "https://web2.xmyeditor.com/static/public/ewm.jpg",
+      "count": 1,
+      "where": "",
+      "file": "assets/ewm.jpg",
+      "sha256": "fa307598dd6e7c092c42a4766883cc5d1e980018f67ee56e984928791f63e54d",
+      "bytes": 8016,
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-jpg/20240307/5ce3519aa31abe4e446a1bcfcb834615.jpg",
+      "count": 3,
+      "where": "",
+      "file": "assets/5ce3519aa31abe4e446a1bcfcb834615.jpg",
+      "sha256": "59d0b280ecfbbfed6835b255d201225a4f8960935ed0f3e6c758cb6a42d52fe5",
+      "bytes": 14549,
+      "size": [
+        396,
+        244
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20240307/29879b61042ece0cf5ebda4000c4cbcc.png",
+      "count": 1,
+      "where": "",
+      "file": "assets/29879b61042ece0cf5ebda4000c4cbcc.png",
+      "sha256": "ed173567bb447711396cc4352720de41c48e0b0e52eb1828e747df3fcae7af62",
+      "bytes": 2946,
+      "size": [
+        233,
+        90
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20240307/4d7d7d81e69a8f484a7f47462c506066.png",
+      "count": 1,
+      "where": "xmyeditor buchai",
+      "file": "assets/4d7d7d81e69a8f484a7f47462c506066.png",
+      "sha256": "5cce61c5caf66189bdb2bce005b0e234b9d6fed32d78ea5a261d1f5a681c8a7a",
+      "bytes": 3912,
+      "size": [
+        226,
+        87
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20240307/9aba3b3c8b6a400ae78db008a9b0e73b.png",
+      "count": 1,
+      "where": "",
+      "file": "assets/9aba3b3c8b6a400ae78db008a9b0e73b.png",
+      "sha256": "a98d91294d761373bfb630e4c1a02dd4695b2de5ebfcd38d0b4a056db5497bce",
+      "bytes": 2251,
+      "size": [
+        133,
+        112
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20240307/b685af2cb64225329cf23c4d8df15736.png",
+      "count": 1,
+      "where": "xmyeditor buchai",
+      "file": "assets/b685af2cb64225329cf23c4d8df15736.png",
+      "sha256": "f193f1a3388336f634fb556031656733278b26a50bb1df2dc514ec878fd238e7",
+      "bytes": 1854,
+      "size": [
+        73,
+        128
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20240307/b9ce82da356d720f0efe7baf652797cb.png",
+      "count": 1,
+      "where": "",
+      "file": "assets/b9ce82da356d720f0efe7baf652797cb.png",
+      "sha256": "10154a2bef18c59571fe5822b6019fb319c5e62d4b4be81953daf64d02c74764",
+      "bytes": 1919,
+      "size": [
+        286,
+        286
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20240307/ea738351fc046ea0a14047d67db92cc7.png",
+      "count": 1,
+      "where": "",
+      "file": "assets/ea738351fc046ea0a14047d67db92cc7.png",
+      "sha256": "f0c9952a971031c87cc0b40e2e8331116bb092b4e6ccd6d06f938cc4c1c36451",
+      "bytes": 3897,
+      "size": [
+        225,
+        87
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20240307/f5ce22ce54c593febe9539aa3c613ff0.png",
+      "count": 1,
+      "where": "xmyeditor buchai",
+      "file": "assets/f5ce22ce54c593febe9539aa3c613ff0.png",
+      "sha256": "fa0c790a08dc9838fddef93142b3e12e6ca9ccea73ac80a7f8b0ae84ec0c9b0f",
+      "bytes": 1162,
+      "size": [
+        103,
+        39
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20240307/fecd33a30380b9dba46c76430b1e6728.png",
+      "count": 1,
+      "where": "xmyeditor buchai",
+      "file": "assets/fecd33a30380b9dba46c76430b1e6728.png",
+      "sha256": "5fb82ae9b1db756d2f55743d4e76d84d5e56ba404e3adaaf0bf44019deb44a0f",
+      "bytes": 6374,
+      "size": [
+        480,
+        112
+      ]
+    }
+  ],
+  "inline_svg": {},
+  "external_deps": [
+    "https://web2.xmyeditor.com/static/public/ewm.jpg",
+    "https://web2.xmyeditor.com/sucai-jpg/20240307/5ce3519aa31abe4e446a1bcfcb834615.jpg",
+    "https://web2.xmyeditor.com/sucai-png/20240307/29879b61042ece0cf5ebda4000c4cbcc.png",
+    "https://web2.xmyeditor.com/sucai-png/20240307/4d7d7d81e69a8f484a7f47462c506066.png",
+    "https://web2.xmyeditor.com/sucai-png/20240307/9aba3b3c8b6a400ae78db008a9b0e73b.png",
+    "https://web2.xmyeditor.com/sucai-png/20240307/b685af2cb64225329cf23c4d8df15736.png",
+    "https://web2.xmyeditor.com/sucai-png/20240307/b9ce82da356d720f0efe7baf652797cb.png",
+    "https://web2.xmyeditor.com/sucai-png/20240307/ea738351fc046ea0a14047d67db92cc7.png",
+    "https://web2.xmyeditor.com/sucai-png/20240307/f5ce22ce54c593febe9539aa3c613ff0.png",
+    "https://web2.xmyeditor.com/sucai-png/20240307/fecd33a30380b9dba46c76430b1e6728.png"
+  ],
+  "wechat_issues": [
+    "含外链图片 —— 公众号正文会剥掉外链图，需先上传素材库换成 mmbiz 地址"
+  ]
+}

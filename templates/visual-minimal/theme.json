@@ -1,0 +1,125 @@
+{
+  "slug": "visual-minimal",
+  "name": "视觉极简",
+  "tagline": "黑白极简，适合观点输出、深度评论、极简审美",
+  "kind": "inline",
+  "source": "template.html",
+  "source_sha256": "b60d5b88c687555142df1c16f541e4d10b1482684a6585c1dc076e2ef5a31c05",
+  "source_bytes": 30042,
+  "palette": {
+    "c1": "#444444",
+    "c2": "#D69B56",
+    "c3": "#fff",
+    "c4": "#DBDBDB",
+    "c5": "#666666",
+    "c6": "rgb(0,0,0)"
+  },
+  "fonts": {},
+  "font_note": "模板未在样式中指定 font-family，使用公众号默认字体（非缺失）",
+  "other_vars": {},
+  "all_hex_colors": {
+    "#fff": 7,
+    "#444444": 36,
+    "#DBDBDB": 5,
+    "#D69B56": 33,
+    "#666666": 4,
+    "rgb(0,0,0)": 1
+  },
+  "type_scale": [
+    "30px",
+    "14px",
+    "15px",
+    "16px",
+    "50px"
+  ],
+  "font_stacks_used": [],
+  "structure": [],
+  "declared_colors": [],
+  "declared_fonts": [],
+  "images": [
+    {
+      "url": "https://web2.xmyeditor.com/static/public/ewm.jpg",
+      "count": 1,
+      "where": "",
+      "file": "assets/ewm.jpg",
+      "sha256": "fa307598dd6e7c092c42a4766883cc5d1e980018f67ee56e984928791f63e54d",
+      "bytes": 8016,
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-gif/20220622/101c418f6427cbe39f238d84c6272f5b.gif",
+      "count": 1,
+      "where": "",
+      "file": "assets/101c418f6427cbe39f238d84c6272f5b.gif",
+      "sha256": "0f138a57a151e5e64f18bf5589da866b5998fac7470e1815dc3b1b47c33c616f",
+      "bytes": 18512,
+      "size": [
+        196,
+        176
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-gif/20220622/5ece545750d5cf2affdaa65a4655cae7.gif",
+      "count": 1,
+      "where": "",
+      "file": "assets/5ece545750d5cf2affdaa65a4655cae7.gif",
+      "sha256": "c942f92b1fa87a7ed83f537ac1260b6c80e5395ea39691a7347b34f59911fb33",
+      "bytes": 2264,
+      "size": [
+        55,
+        53
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-gif/20220622/a0547a222addd366990dd72320687d87.gif",
+      "count": 1,
+      "where": "",
+      "file": "assets/a0547a222addd366990dd72320687d87.gif",
+      "sha256": "5664a2cabbcb34d05a6dca8dde1e8c8ff6ab6dac8119b1dee66fae9580dc2955",
+      "bytes": 21224,
+      "size": [
+        97,
+        53
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-gif/20220622/e17c00ff0877cdbf339f44a7a9728329.gif",
+      "count": 8,
+      "where": "",
+      "file": "assets/e17c00ff0877cdbf339f44a7a9728329.gif",
+      "sha256": "45b251fa10a4d7fd7a986e05a327f713635bf05fbdb873313ba36b64ce1842f5",
+      "bytes": 16411,
+      "size": [
+        106,
+        115
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-jpg/20220622/59f697f12c7b18c2bf2757c5a7cdb74b.jpg",
+      "count": 3,
+      "where": "",
+      "file": "assets/59f697f12c7b18c2bf2757c5a7cdb74b.jpg",
+      "sha256": "cdc4e336c4c1b3b62f0d883ca451e6d3aeca072df8f7c3f04669fdf71fc11ba9",
+      "bytes": 10957,
+      "size": [
+        426,
+        264
+      ]
+    }
+  ],
+  "inline_svg": {},
+  "external_deps": [
+    "https://web2.xmyeditor.com/static/public/ewm.jpg",
+    "https://web2.xmyeditor.com/sucai-gif/20220622/101c418f6427cbe39f238d84c6272f5b.gif",
+    "https://web2.xmyeditor.com/sucai-gif/20220622/5ece545750d5cf2affdaa65a4655cae7.gif",
+    "https://web2.xmyeditor.com/sucai-gif/20220622/a0547a222addd366990dd72320687d87.gif",
+    "https://web2.xmyeditor.com/sucai-gif/20220622/e17c00ff0877cdbf339f44a7a9728329.gif",
+    "https://web2.xmyeditor.com/sucai-jpg/20220622/59f697f12c7b18c2bf2757c5a7cdb74b.jpg"
+  ],
+  "wechat_issues": [
+    "含外链图片 —— 公众号正文会剥掉外链图，需先上传素材库换成 mmbiz 地址"
+  ]
+}
