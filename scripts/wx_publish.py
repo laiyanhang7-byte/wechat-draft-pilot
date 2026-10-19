@@ -55,6 +55,46 @@ DEFAULT_AUTHOR = "小编"
 BRAND_FOOTER = "公众号自动化"
 FONT_PATH = ""
 
+# 中文字体候选：Windows 微软雅黑 / macOS 苹方·冬青黑体 / Linux 文泉驿·Noto
+FONT_CANDIDATES = (
+    r"C:\Windows\Fonts\msyhbd.ttc", r"C:\Windows\Fonts\msyh.ttc",
+    "/System/Library/Fonts/PingFang.ttc", "/System/Library/Fonts/Hiragino Sans GB.ttc",
+    "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc",
+    "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+)
+
+
+def detect_font():
+    """探测系统中可用的中文字体，找不到返回空串（调用方需兜底）"""
+    return next((p for p in FONT_CANDIDATES if os.path.exists(p)), "")
+
+
+def _load_font(size):
+    """加载字体：优先配置/探测到的中文字体，失败退回 PIL 内置字体（英文可用，中文可能缺字）"""
+    from PIL import ImageFont
+    if FONT_PATH:
+        try:
+            return ImageFont.truetype(FONT_PATH, size)
+        except Exception:
+            pass
+    try:
+        return ImageFont.load_default(size=size)
+    except Exception:
+        return ImageFont.load_default()
+
+
+def _text_width(draw, text, font, size):
+    """测量文本宽度：textlength → getbbox → 估算，逐级兜底，保证封面生成不因字体崩掉"""
+    try:
+        return draw.textlength(text, font=font)
+    except Exception:
+        pass
+    try:
+        box = draw.textbbox((0, 0), text, font=font)
+        return box[2] - box[0]
+    except Exception:
+        return len(text) * size * 0.5
+
 
 def init_credentials():
     """延迟加载：--help 等本地操作不要求凭证，真正调 API 的命令才校验"""
@@ -74,12 +114,7 @@ def init_credentials():
     SECRET = cfg["app_secret"]
     DEFAULT_AUTHOR = cfg.get("author", "小编")
     BRAND_FOOTER = cfg.get("brand_footer", "公众号自动化")
-    FONT_PATH = cfg.get("font_path") or next(
-        (p for p in (r"C:\Windows\Fonts\msyhbd.ttc", r"C:\Windows\Fonts\msyh.ttc",          # Windows 微软雅黑
-                     "/System/Library/Fonts/PingFang.ttc", "/System/Library/Fonts/Hiragino Sans GB.ttc",  # macOS 苹方/冬青黑体
-                     "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc",                    # Linux 文泉驿
-                     "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc")            # Linux Noto
-         if os.path.exists(p)), "")
+    FONT_PATH = cfg.get("font_path") or detect_font()
 
 REQUESTS_OK = True
 try:
@@ -114,24 +149,57 @@ def wx_post_json(url, payload):
     return json.loads(r.content.decode("utf-8"))
 
 
+TITLE_PUNCT = "，。、；：！？,;:!?）)】》」』…—"
+
+
+def split_title(title, max_chars=12):
+    """封面标题折行：优先在标点后断开，避免把词拆成两半（如「全自/动」）。
+
+    规则：
+      - 不超过 max_chars 字 → 单行
+      - 否则两行，断点取「中点附近」的标点之后；无标点则取中点
+      - 每行超过 max_chars+2 字时截断加省略号（防止溢出 900px 画布）
+    """
+    title = (title or "").strip()
+    if not title:
+        return [""]
+    if len(title) <= max_chars:
+        return [title]
+
+    mid = len(title) // 2
+    best = None
+    for i, ch in enumerate(title):
+        if ch in TITLE_PUNCT:
+            cut = i + 1
+            if 3 <= cut <= len(title) - 1:
+                if best is None or abs(cut - mid) < abs(best - mid):
+                    best = cut
+    if best is None:
+        best = mid if len(title) <= max_chars * 2 else max_chars
+
+    lines = [title[:best], title[best:]]
+    limit = max_chars + 2
+    return [ln if len(ln) <= limit else ln[:limit - 1] + "…" for ln in lines]
+
+
 def make_cover(title, out_path):
-    from PIL import Image, ImageDraw, ImageFont
+    from PIL import Image, ImageDraw
     W, H = 900, 383
     img = Image.new("RGB", (W, H), (24, 48, 92))
     d = ImageDraw.Draw(img)
     d.rectangle([0, H - 70, W, H], fill=(200, 60, 50))
     for i in range(5):
         d.ellipse([W - 320 + i * 70, -120 + i * 55, W - 80 + i * 70, 130 + i * 55], outline=(255, 255, 255), width=3)
-    font_big = ImageFont.truetype(FONT_PATH, 64)
-    font_small = ImageFont.truetype(FONT_PATH, 30)
-    lines = [title[:12], title[12:24]] if len(title) > 12 else [title]
-    y = 110
+    font_big = _load_font(64)
+    font_small = _load_font(30)
+    lines = split_title(title)
+    y = 110 if len(lines) == 1 else 95
     for ln in lines[:2]:
-        w = d.textlength(ln, font=font_big)
+        w = _text_width(d, ln, font_big, 64)
         d.text(((W - w) / 2, y), ln, font=font_big, fill=(255, 255, 255))
         y += 90
     footer = BRAND_FOOTER
-    w = d.textlength(footer, font=font_small)
+    w = _text_width(d, footer, font_small, 30)
     d.text(((W - w) / 2, H - 52), footer, font=font_small, fill=(255, 255, 255))
     img.save(out_path, "JPEG", quality=90)
     return out_path

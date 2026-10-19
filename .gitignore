@@ -15,6 +15,7 @@ auto_cover.jpg
 *_fix.html
 svg_demo.html
 *.log
+examples/out/
 
 # 系统与编辑器
 .DS_Store

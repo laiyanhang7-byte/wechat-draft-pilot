@@ -6,6 +6,7 @@ import os, sys, json
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "scripts"))
 from wx_publish import garble_check, video_iframe  # noqa: E402
+import wx_publish  # noqa: E402
 import svg_cards  # noqa: E402
 
 checks = []
@@ -87,7 +88,52 @@ except ImportError as e:  # 没装 Pillow 时跳过，不让 CI 因可选依赖�
     PIL_OK = False
     print("SKIP 感知哈希测试（缺少 Pillow: %s）" % e)
 
-# ---------- 5. 视频模板回归（与 test_video_iframe.py 互补：只看参数透传） ----------
+# ---------- 5. 封面标题折行：不能在词中间硬断 ----------
+st = wx_publish.split_title
+
+check("短标题单行", st("短标题") == ["短标题"], str(st("短标题")))
+check("空标题不崩", st("") == [""] and st(None) == [""])
+
+two = st("公众号排版，其实可以全自动")
+check("优先在标点后断开", two == ["公众号排版，", "其实可以全自动"], str(two))
+check("两行长度均衡（差值≤3）", abs(len(two[0]) - len(two[1])) <= 3, f"{len(two[0])}/{len(two[1])}")
+
+nop = st("标题没有标点但是特别特别长的一句话需要处理")
+check("无标点按中点断", len(nop) == 2 and abs(len(nop[0]) - len(nop[1])) <= 2, str(nop))
+
+long_one = st("超" * 40)
+check("单行超长截断加省略号",
+      all(len(ln) <= 14 for ln in long_one) and long_one[1].endswith("…"), str(long_one)[:40])
+
+check("折行后拼回原文（未截断时）", "".join(two) == "公众号排版，其实可以全自动")
+
+# ---------- 6. 字体探测与兜底（无凭证也能出封面） ----------
+font = wx_publish.detect_font()
+check("detect_font 返回字符串", isinstance(font, str), font or "(空)")
+check("探测到的字体真实存在", (font == "") or os.path.exists(font), font)
+
+try:
+    from PIL import Image, ImageDraw
+    img = Image.new("RGB", (100, 40), (0, 0, 0))
+    d = ImageDraw.Draw(img)
+    f = wx_publish._load_font(24)
+    check("_load_font 恒返回可用字体对象", f is not None)
+    w = wx_publish._text_width(d, "测试文本", f, 24)
+    check("_text_width 返回正数", isinstance(w, (int, float)) and w > 0, f"w={w}")
+
+    tmpdir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "_tmp_cover")
+    os.makedirs(tmpdir, exist_ok=True)
+    cover = wx_publish.make_cover("无凭证也能生成封面，验证兜底逻辑", os.path.join(tmpdir, "c.jpg"))
+    check("make_cover 无凭证可生成", os.path.getsize(cover) > 3000, f"{os.path.getsize(cover)}B")
+    from PIL import Image as _I
+    with _I.open(cover) as im:
+        check("封面尺寸 900x383", im.size == (900, 383), str(im.size))
+    os.remove(cover)
+    os.rmdir(tmpdir)
+except ImportError:
+    print("SKIP 封面测试（缺少 Pillow）")
+
+# ---------- 7. 视频模板回归（与 test_video_iframe.py 互补：只看参数透传） ----------
 vf = video_iframe("wxv_1", "0.75", 800, "https://mmbiz.qpic.cn/c.jpg")
 check("video_iframe 参数全部透传",
       "wxv_1" in vf and 'data-ratio="0.75"' in vf and 'data-w="800"' in vf
