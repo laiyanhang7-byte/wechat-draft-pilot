@@ -133,6 +133,92 @@ try:
 except ImportError:
     print("SKIP 封面测试（缺少 Pillow）")
 
+# ---------- 8. 本地校验与接口错误处理（防「假成功」回归） ----------
+import io, contextlib, tempfile  # noqa: E402
+
+
+def expect_die(fn):
+    """调用 fn，断言它走 die()：输出末行 ok:false 且 SystemExit(1)。返回 (code, payload)"""
+    buf = io.StringIO()
+    try:
+        with contextlib.redirect_stdout(buf):
+            fn()
+    except SystemExit as e:
+        lines = [ln for ln in buf.getvalue().strip().splitlines() if ln.strip()]
+        return e.code, (json.loads(lines[-1]) if lines else {})
+    return None, {}
+
+
+# 8.1 接口报错必须 fail，不能返回 ok:true（微信失败响应通常不带业务字段，旧代码会误报成功）
+code, payload = expect_die(lambda: wx_publish.api_check({"errcode": 40007, "errmsg": "invalid media_id"}, "拉取草稿"))
+check("api_check 对 errcode≠0 直接失败", code == 1 and payload.get("ok") is False, str(payload))
+check("api_check 透出 errcode/errmsg",
+      payload.get("errcode") == 40007 and payload.get("errmsg") == "invalid media_id", str(payload))
+check("api_check 对成功响应原样返回",
+      wx_publish.api_check({"media_id": "M"}, "x") == {"media_id": "M"})
+check("api_check 无 errcode 字段视为成功", wx_publish.api_check({"a": 1}, "x") == {"a": 1})
+
+# 8.2 HTML 读取：缺失/目录/空/GBK/UTF-16 五种情况
+tmpd = tempfile.mkdtemp(prefix="wx_test_")
+
+
+def _write(name, raw):
+    p = os.path.join(tmpd, name)
+    with open(p, "wb") as f:
+        f.write(raw)
+    return p
+
+
+code, payload = expect_die(lambda: wx_publish.read_html(os.path.join(tmpd, "nope.html")))
+check("read_html 文件不存在→干净报错", code == 1 and "不存在" in payload.get("error", ""), str(payload))
+
+code, payload = expect_die(lambda: wx_publish.read_html(tmpd))
+check("read_html 传目录→报错", code == 1 and "目录" in payload.get("error", ""), str(payload))
+
+code, payload = expect_die(lambda: wx_publish.read_html(_write("empty.html", b"   \n")))
+check("read_html 空文件→报错", code == 1 and "空" in payload.get("error", ""), str(payload))
+
+gbk_path = _write("gbk.html", "<p>中文内容</p>".encode("gbk"))
+check("read_html 自动识别 GB18030", "中文内容" in wx_publish.read_html(gbk_path))
+
+bom_path = _write("bom.html", "\ufeff<p>带BOM</p>".encode("utf-8"))
+check("read_html 正确剥离 UTF-8 BOM", wx_publish.read_html(bom_path).startswith("<p>"), repr(wx_publish.read_html(bom_path)[:8]))
+
+code, payload = expect_die(lambda: wx_publish.read_html(_write("u16.html", "<p>中文</p>".encode("utf-16"))))
+check("read_html 无法识别编码时明确报错", code == 1 and "编码" in payload.get("error", ""), str(payload))
+
+# 8.3 标题 / 摘要校验
+code, payload = expect_die(lambda: wx_publish.check_title("   "))
+check("空标题被本地拦下", code == 1 and "标题" in payload.get("error", ""), str(payload))
+
+code, payload = expect_die(lambda: wx_publish.check_title("字" * 65))
+check("标题超 64 字被拦下", code == 1 and payload.get("length") == 65, str(payload))
+
+check("标题去首尾空白", wx_publish.check_title("  正常标题  ") == "正常标题")
+check("64 字标题正好放行", wx_publish.check_title("字" * 64) == "字" * 64)
+
+check("摘要缺省取标题前 50 字", wx_publish.norm_digest("", "标" * 80) == "标" * 50)
+check("摘要 120 字原样保留", wx_publish.norm_digest("摘" * 120, "t") == "摘" * 120)
+
+_buf = io.StringIO()
+with contextlib.redirect_stderr(_buf):
+    trimmed = wx_publish.norm_digest("摘" * 150, "t")
+check("摘要超 120 字自动截断并提示", len(trimmed) == 120 and "截断" in _buf.getvalue(), f"{len(trimmed)} {_buf.getvalue()!r}")
+
+# 8.4 视频注入位置
+h2_html = "<h2>标题</h2><p>正文</p>"
+out, where = wx_publish.inject_video(h2_html, "wxv_1", "0.8", 1200, "")
+check("有 h2 时插到 </h2> 之后", where == "after_h2" and out.index("<section") > out.index("</h2>"), where)
+check("注入不破坏原文", "标题" in out and "正文" in out)
+
+out2, where2 = wx_publish.inject_video("<p>无标题</p>", "wxv_1", "0.8", 1200, "")
+check("无 h2 时插到最前", where2 == "top" and out2.startswith("<section"), where2)
+
+# 清理临时目录
+for fn in os.listdir(tmpd):
+    os.remove(os.path.join(tmpd, fn))
+os.rmdir(tmpd)
+
 # ---------- 7. 视频模板回归（与 test_video_iframe.py 互补：只看参数透传） ----------
 vf = video_iframe("wxv_1", "0.75", 800, "https://mmbiz.qpic.cn/c.jpg")
 check("video_iframe 参数全部透传",

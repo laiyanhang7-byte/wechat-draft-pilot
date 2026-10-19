@@ -2,22 +2,26 @@
 """微信公众号草稿箱自动化 · 主入口
 子命令:
   status                        验证凭证+素材库统计（冒烟用）
-  publish <html> --title T [--author A] [--digest D] [--cover JPG]
+  publish <html> --title T [--author A] [--digest D] [--cover JPG] [--dry-run]
                                 [--video wxv_XXX --video-ratio 0.8 --video-w 1200 --video-cover ENC]
                                 排版好的 HTML 进草稿箱（可自动嵌视频）
   draft-list [N]                草稿箱最新 N 篇
   draft-get <media_id> [--check] 拉草稿（--check 附乱码/视频检验）
-  update <media_id> <html> --title T [--author A] [--digest D] [--cover JPG]
+  update <media_id> <html> --title T [--author A] [--digest D] [--cover JPG] [--dry-run]
+                                [--video wxv_XXX ...]
                                 全量更新草稿（显式 UTF-8，防乱码）
   video-add <mp4> --title T [--desc D]   上传视频到素材库
   video-list                    素材库视频列表
-所有命令成功时最后输出机读行 {"ok": true, ...}
+所有命令成功时最后输出机读行 {"ok": true, ...}；失败输出 {"ok": false, "error": ..., "errcode": ...} 并退出码 1
+
+本地校验（先于任何网络请求）：文件不存在/编码非 UTF-8/空文件/空标题/标题超 64 字/封面缺失，都会直接报错退出。
+--dry-run 只跑本地校验并输出将发送的内容摘要（含视频插入位置），不消耗任何接口调用。
 
 凭证配置（二选一，必须配一项）:
   1. 环境变量  WECHAT_APP_ID / WECHAT_APP_SECRET
   2. 配置文件  config.json（参考 config.example.json，放在脚本同目录或当前目录）
 """
-import sys, os, json, argparse, datetime
+import sys, os, json, argparse, datetime, tempfile
 
 # Windows 控制台默认 cp1252/GBK，中文 --help/输出会 UnicodeEncodeError，强制 UTF-8
 for _stream in (sys.stdout, sys.stderr):
@@ -132,6 +136,72 @@ def ok(**kw):
     print(json.dumps({"ok": True, **kw}, ensure_ascii=False))
 
 
+def api_check(d, action):
+    """微信接口统一错误检查。
+
+    必须显式判 errcode：微信失败时通常**不带**业务字段（如 draft/get 报错时没有 news_item），
+    直接 .get(..., [{}]) 取值会得到空结果并误报 ok:true —— 工具自己的冒烟命令也会说谎。
+    """
+    code = d.get("errcode", 0)
+    if code != 0:
+        die("%s失败" % action, errcode=code, errmsg=d.get("errmsg", ""))
+    return d
+
+
+def read_html(path):
+    """读本地 HTML：友好报错 + 编码兜底（Windows 用户从 WPS/Word 导出的常是 GB18030）"""
+    if not os.path.exists(path):
+        die("HTML 文件不存在", path=path)
+    if os.path.isdir(path):
+        die("给的是目录，需要 HTML 文件", path=path)
+    try:
+        with open(path, "rb") as f:
+            raw = f.read()
+    except OSError as e:
+        die("HTML 文件读取失败", path=path, reason=str(e))
+    for enc in ("utf-8-sig", "utf-8", "gb18030"):
+        try:
+            text = raw.decode(enc)
+            break
+        except UnicodeDecodeError:
+            continue
+    else:
+        die("无法识别文件编码（已尝试 UTF-8 / GB18030），请另存为 UTF-8", path=path)
+    if not text.strip():
+        die("HTML 文件是空的", path=path)
+    return text
+
+
+def check_title(title):
+    """微信标题上限 64 字；空标题在服务端才报错，本地先拦，省掉一次封面上传"""
+    t = (title or "").strip()
+    if not t:
+        die("标题不能为空（--title）")
+    if len(t) > 64:
+        die("标题超过微信上限 64 字", length=len(t))
+    return t
+
+
+def norm_digest(digest, title):
+    """摘要上限 120 字：超长自动截断并在 stderr 提示，不阻断发布"""
+    d = (digest or "").strip() or title[:50]
+    if len(d) > 120:
+        sys.stderr.write("[warn] 摘要超过 120 字，已自动截断（原 %d 字）\n" % len(d))
+        d = d[:120]
+    return d
+
+
+def check_cover(path):
+    """显式指定封面时，本地先确认文件存在且非空，避免白跑一次 token + 上传"""
+    if not path:
+        return ""
+    if not os.path.exists(path):
+        die("封面文件不存在", path=path)
+    if os.path.getsize(path) == 0:
+        die("封面文件是空的", path=path)
+    return path
+
+
 def get_token():
     r = requests.get("https://api.weixin.qq.com/cgi-bin/token",
                      params={"grant_type": "client_credential", "appid": APPID, "secret": SECRET}, timeout=15)
@@ -206,12 +276,13 @@ def make_cover(title, out_path):
 
 
 def upload_material(token, path, mtype, description=None):
-    files = {"media": (os.path.basename(path), open(path, "rb"),
-                       "image/jpeg" if mtype == "image" else "video/mp4" if mtype == "video" else "application/octet-stream")}
+    mime = "image/jpeg" if mtype == "image" else "video/mp4" if mtype == "video" else "application/octet-stream"
     data = {"description": json.dumps(description, ensure_ascii=False).encode("utf-8")} if description else None
-    r = requests.post(f"https://api.weixin.qq.com/cgi-bin/material/add_material?access_token={token}&type={mtype}",
-                      files=files, data=data, timeout=120)
-    return r.json()
+    # 用 with 显式关闭：否则文件句柄悬挂，Windows 下会锁住文件（下次覆盖 auto_cover 时报 PermissionError）
+    with open(path, "rb") as fh:
+        r = requests.post(f"https://api.weixin.qq.com/cgi-bin/material/add_material?access_token={token}&type={mtype}",
+                          files={"media": (os.path.basename(path), fh, mime)}, data=data, timeout=120)
+    return json.loads(r.content.decode("utf-8"))
 
 
 def upload_thumb(token, jpg_path):
@@ -260,33 +331,47 @@ def cmd_status(args):
     token = get_token()
     r = requests.post(f"https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token={token}",
                       data=json.dumps({"type": "video", "offset": 0, "count": 1}), timeout=30)
-    d = r.json()
+    d = api_check(json.loads(r.content.decode("utf-8")), "素材库查询")
     ok(token="ok", video_materials=d.get("item_count", 0), appid=APPID)
 
 
+def inject_video(html, wxv_id, ratio, width, cover):
+    """把视频 iframe 插到第一个 </h2> 之后；没有 h2 就插到正文最前"""
+    iframe = video_iframe(wxv_id, ratio, width, cover or "")
+    idx = html.find("</h2>")
+    if idx > 0:
+        ins = idx + len("</h2>")
+        return html[:ins] + iframe + html[ins:], "after_h2"
+    return iframe + html, "top"
+
+
 def cmd_publish(args):
-    token = get_token()
-    html = open(args.html, encoding="utf-8").read()
+    # 先做本地校验，再取 token：本地文件有问题不该白跑一次网络请求
+    title = check_title(args.title)
+    html = read_html(args.html)
+    cover = check_cover(args.cover)
+    digest = norm_digest(args.digest, title)
+    video_at = None
     if args.video:
-        # 视频插入：第一个 h2 结束后，或正文最前
-        iframe = video_iframe(args.video, args.video_ratio, args.video_w, args.video_cover or "")
-        idx = html.find("</h2>")
-        if idx > 0:
-            ins = idx + len("</h2>")
-            html = html[:ins] + iframe + html[ins:]
-        else:
-            html = iframe + html
-    cover = args.cover or make_cover(args.title, os.path.join(BASE, "auto_cover.jpg"))
+        html, video_at = inject_video(html, args.video, args.video_ratio, args.video_w, args.video_cover)
+
+    if getattr(args, "dry_run", False):
+        ok(dry_run=True, title=title, digest=digest, content_length=len(html),
+           video_at=video_at, cover=cover or "(将自动生成)", media_id=None)
+        return
+
+    token = get_token()
+    cover = cover or make_cover(title, os.path.join(tempfile.gettempdir(), "wx_auto_cover.jpg"))
     thumb_id, _ = upload_thumb(token, cover)
-    mid = add_draft(token, args.title, html, thumb_id, args.digest or args.title[:50], args.author)
-    ok(media_id=mid, title=args.title, cover=cover)
+    mid = add_draft(token, title, html, thumb_id, digest, args.author)
+    ok(media_id=mid, title=title, cover=cover, content_length=len(html), video_at=video_at)
 
 
 def cmd_draft_list(args):
     token = get_token()
     r = requests.post(f"https://api.weixin.qq.com/cgi-bin/draft/batchget?access_token={token}",
                       data=json.dumps({"offset": 0, "count": args.count, "no_content": 1}).encode("utf-8"), timeout=30)
-    d = r.json()
+    d = api_check(json.loads(r.content.decode("utf-8")), "拉取草稿列表")
     items = [{"title": it["content"]["news_item"][0].get("title", ""),
               "media_id": it.get("media_id", ""),
               "updated": datetime.datetime.fromtimestamp(it.get("update_time", 0)).strftime("%m-%d %H:%M")}
@@ -299,7 +384,7 @@ def cmd_draft_get(args):
     r = requests.post(f"https://api.weixin.qq.com/cgi-bin/draft/get?access_token={token}",
                       data=json.dumps({"media_id": args.media_id}).encode("utf-8"), timeout=30)
     # 显式 UTF-8 解码：微信 content-type 无 charset，r.json() 会按 ISO-8859-1 误读出假乱码
-    d = json.loads(r.content.decode("utf-8"))
+    d = api_check(json.loads(r.content.decode("utf-8")), "拉取草稿")
     n = d.get("news_item", [{}])[0]
     c = n.get("content", "")
     info = {"ok": True, "title": n.get("title", ""), "content_length": len(c),
@@ -312,14 +397,25 @@ def cmd_draft_get(args):
 
 
 def cmd_update(args):
+    title = check_title(args.title)
+    html = read_html(args.html)
+    cover = check_cover(args.cover)
+    digest = norm_digest(args.digest, title)
+    video_at = None
+    if getattr(args, "video", ""):
+        html, video_at = inject_video(html, args.video, args.video_ratio, args.video_w, args.video_cover)
+
+    if getattr(args, "dry_run", False):
+        ok(dry_run=True, media_id=args.media_id, title=title, digest=digest,
+           content_length=len(html), video_at=video_at, cover=cover or "(将自动生成)")
+        return
+
     token = get_token()
-    html = open(args.html, encoding="utf-8").read()
-    cover = args.cover or make_cover(args.title, os.path.join(BASE, "auto_cover.jpg"))
+    cover = cover or make_cover(title, os.path.join(tempfile.gettempdir(), "wx_auto_cover.jpg"))
     thumb_id, _ = upload_thumb(token, cover)
-    d = update_draft(token, args.media_id, args.title, html, thumb_id, args.digest or args.title[:50], args.author)
-    if d.get("errcode", 0) != 0:
-        die("更新草稿失败", detail=d)
-    ok(media_id=args.media_id, updated=True)
+    d = update_draft(token, args.media_id, title, html, thumb_id, digest, args.author)
+    api_check(d, "更新草稿")
+    ok(media_id=args.media_id, updated=True, content_length=len(html), video_at=video_at)
 
 
 def cmd_video_add(args):
@@ -328,19 +424,19 @@ def cmd_video_add(args):
     d = upload_material(token, args.mp4, "video", desc)
     if "media_id" not in d:
         die("上传视频失败", detail=d)
-    g = requests.post(f"https://api.weixin.qq.com/cgi-bin/material/get_material?access_token={token}",
-                      data=json.dumps({"media_id": d["media_id"]}).encode("utf-8"), timeout=30).json()
-    ok(media_id=d["media_id"], vid=g.get("vid", ""), note="vid 为 apiv_ 前缀，嵌正文需后台插入一次换取 wxv_ id")
-    if g.get("cover_url"):
-        ok2 = json.dumps({"ok": True, "cover_url": g["cover_url"]}, ensure_ascii=False)
-        print(ok2)
+    r = requests.post(f"https://api.weixin.qq.com/cgi-bin/material/get_material?access_token={token}",
+                      data=json.dumps({"media_id": d["media_id"]}).encode("utf-8"), timeout=30)
+    g = api_check(json.loads(r.content.decode("utf-8")), "查询视频详情")
+    # 只输出一行结果：多行 JSON 会破坏「最后一行是机读结果」的约定
+    ok(media_id=d["media_id"], vid=g.get("vid", ""), cover_url=g.get("cover_url", ""),
+       note="vid 为 apiv_ 前缀，嵌正文需后台插入一次换取 wxv_ id")
 
 
 def cmd_video_list(args):
     token = get_token()
     r = requests.post(f"https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token={token}",
                       data=json.dumps({"type": "video", "offset": 0, "count": 20}).encode("utf-8"), timeout=30)
-    d = r.json()
+    d = api_check(json.loads(r.content.decode("utf-8")), "拉取视频列表")
     items = [{"media_id": it.get("media_id", ""), "name": it.get("name", ""),
               "updated": datetime.datetime.fromtimestamp(it.get("update_time", 0)).strftime("%m-%d %H:%M")}
              for it in d.get("item", [])]
@@ -352,22 +448,35 @@ def main():
     sub = p.add_subparsers(dest="cmd", required=True)
     sub.add_parser("status").set_defaults(func=cmd_status)
     sp = sub.add_parser("publish")
-    sp.add_argument("html"); sp.add_argument("--title", required=True)
-    sp.add_argument("--author", default=""); sp.add_argument("--digest", default="")
-    sp.add_argument("--cover", default=""); sp.add_argument("--video", default="")
+    sp.add_argument("html", help="排版好的 HTML 文件路径")
+    sp.add_argument("--title", required=True, help="文章标题（≤64 字）")
+    sp.add_argument("--author", default="", help="作者，默认取配置 author")
+    sp.add_argument("--digest", default="", help="摘要（≤120 字，超长自动截断；默认取标题前 50 字）")
+    sp.add_argument("--cover", default="", help="封面 JPG 路径，不传则按标题自动生成 900x383")
+    sp.add_argument("--video", default="", help="wxv_ 前缀视频 id，自动插到第一个 h2 之后")
+    sp.add_argument("--video-ratio", default="0.8", help="视频宽高比，默认 0.8")
+    sp.add_argument("--video-w", type=int, default=1200, help="视频容器宽度，默认 1200")
+    sp.add_argument("--video-cover", default="", help="视频封面 URL（需 URL 编码）")
+    sp.add_argument("--dry-run", action="store_true", help="只做本地校验并输出将要发送的内容摘要，不调用任何接口")
+    sp.set_defaults(func=cmd_publish)
+    sp = sub.add_parser("draft-list"); sp.add_argument("count", nargs="?", type=int, default=5, help="拉取条数，默认 5")
+    sp.set_defaults(func=cmd_draft_list)
+    sp = sub.add_parser("draft-get"); sp.add_argument("media_id"); sp.add_argument("--check", action="store_true", help="附乱码三指标与结构自检")
+    sp.set_defaults(func=cmd_draft_get)
+    sp = sub.add_parser("update")
+    sp.add_argument("media_id", help="要更新的草稿 media_id")
+    sp.add_argument("html", help="新的 HTML 文件路径")
+    sp.add_argument("--title", required=True, help="文章标题（≤64 字）")
+    sp.add_argument("--author", default="")
+    sp.add_argument("--digest", default="", help="摘要（≤120 字）")
+    sp.add_argument("--cover", default="", help="封面 JPG，不传则自动生成")
+    sp.add_argument("--video", default="", help="wxv_ 前缀视频 id，自动插到第一个 h2 之后")
     sp.add_argument("--video-ratio", default="0.8"); sp.add_argument("--video-w", type=int, default=1200)
     sp.add_argument("--video-cover", default="")
-    sp.set_defaults(func=cmd_publish)
-    sp = sub.add_parser("draft-list"); sp.add_argument("count", nargs="?", type=int, default=5)
-    sp.set_defaults(func=cmd_draft_list)
-    sp = sub.add_parser("draft-get"); sp.add_argument("media_id"); sp.add_argument("--check", action="store_true")
-    sp.set_defaults(func=cmd_draft_get)
-    sp = sub.add_parser("update"); sp.add_argument("media_id"); sp.add_argument("html")
-    sp.add_argument("--title", required=True); sp.add_argument("--author", default="")
-    sp.add_argument("--digest", default=""); sp.add_argument("--cover", default="")
+    sp.add_argument("--dry-run", action="store_true", help="只做本地校验，不调用任何接口")
     sp.set_defaults(func=cmd_update)
-    sp = sub.add_parser("video-add"); sp.add_argument("mp4"); sp.add_argument("--title", required=True)
-    sp.add_argument("--desc", default="")
+    sp = sub.add_parser("video-add"); sp.add_argument("mp4", help="本地 mp4 路径")
+    sp.add_argument("--title", required=True); sp.add_argument("--desc", default="")
     sp.set_defaults(func=cmd_video_add)
     sub.add_parser("video-list").set_defaults(func=cmd_video_list)
     args = p.parse_args()

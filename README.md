@@ -112,15 +112,20 @@ export WECHAT_APP_ID=你的AppID
 export WECHAT_APP_SECRET=你的AppSecret
 #   或复制 config.example.json 为 config.json 填入凭证
 
-# 3. 冒烟：验证凭证 + 素材库统计
+# 3. 先干跑：本地校验文件/标题/封面，打印将要发送的内容摘要，不消耗任何接口调用
+python scripts/wx_publish.py publish article.html --title "标题" --dry-run
+
+# 4. 冒烟：验证凭证 + 素材库统计
 python scripts/wx_publish.py status
 
-# 4. 排版好的 HTML 进草稿箱
+# 5. 排版好的 HTML 进草稿箱
 python scripts/wx_publish.py publish article.html --title "标题" --digest "摘要"
 
-# 5. 真连验证（强烈建议）
+# 6. 真连验证（强烈建议）
 python scripts/wx_publish.py draft-get <media_id> --check
 ```
+
+**失败时的行为**：任何一步失败都输出 `{"ok": false, "error": "...", "errcode": ..., "errmsg": ...}` 并以退出码 1 结束，可直接用 `&&` 串命令或让脚本判断。接口返回 `errcode≠0` 一律判失败——不会出现"接口报错但显示成功"的假成功。
 
 > **排版环节**：搭配 [md2wechat](https://www.npmjs.com/package/md2wechat)（npm 全局安装）将 Markdown 转成微信兼容 HTML，支持自定义主题（`#nice` 前缀 CSS，规范见 pitfalls 第三节）。不装 md2wechat 也可直接使用任意来源的 HTML。
 
