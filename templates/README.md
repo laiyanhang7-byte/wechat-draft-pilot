@@ -45,6 +45,26 @@ templates/
 └── forest-natural/            同上
 ```
 
+## 发成草稿箱（验收用）
+
+内联族可以直接发。脚本会：取 `<body>` → 删 `<script>` → 把外链插画逐张上传正文图床 →
+替换 `src`/`data-src` → 建草稿 → 自动验收 → 桌面生成预览。
+
+```bash
+# 先干跑，不联网：看会替换多少处、有没有漏图
+python -X utf8 templates/publish_template.py --slug chuli-fenfa --dry-run
+
+# 真发单套
+python -X utf8 templates/publish_template.py --slug chuli-fenfa
+
+# 7 套内联族全发
+python -X utf8 templates/publish_template.py --all
+```
+
+- 上传结果缓存在 `assets/uploaded.json`（已 gitignore），重跑不重复上传。
+- 网页级 3 套默认拒绝（会发成白文），要发需显式加 `--allow-css-var`。
+- 每次发布都会输出 `media_id` + 验收明细（乱码三指标 / h2 数 / 配图数 / 标题）。
+
 ## 常用命令
 
 ```bash
