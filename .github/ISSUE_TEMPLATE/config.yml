@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🔐 安全漏洞 / 凭证泄露
+    url: https://github.com/laiyanhang7-byte/wechat-draft-pilot/security/advisories/new
+    about: 发现安全问题请走私密渠道，不要公开提 issue
+  - name: 📖 踩坑全集（先看这里）
+    url: https://github.com/laiyanhang7-byte/wechat-draft-pilot/blob/main/docs/pitfalls.md
+    about: 乱码三连、视频四条死路一条活路、权限矩阵等真连结论都在这
+  - name: 📦 安装与凭证配置
+    url: https://github.com/laiyanhang7-byte/wechat-draft-pilot/blob/main/docs/INSTALL.md
+    about: 环境变量、IP 白名单、未认证订阅号权限等安装问题

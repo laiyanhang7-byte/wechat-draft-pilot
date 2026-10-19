@@ -1,9 +1,11 @@
 # wechat-draft-pilot
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/laiyanhang7-byte/wechat-draft-pilot?display_name=tag&sort=semver)](../../releases)
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
 [![CI](https://github.com/laiyanhang7-byte/wechat-draft-pilot/actions/workflows/ci.yml/badge.svg)](../../actions)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-lightgrey.svg)]()
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 **微信排版一键自动化，全自动发公众号 —— Markdown 进，排版好的文章直接躺进草稿箱，人工一键确认发布。支持 Claude Code / Codex / WorkBuddy 等主流智能体接入。**
 
@@ -78,6 +80,26 @@ git clone https://github.com/laiyanhang7-byte/wechat-draft-pilot.git
 export WECHAT_APP_ID=wx你的AppID
 export WECHAT_APP_SECRET=你的AppSecret
 ```
+
+## 获取
+
+**方式一：锁定发布版（推荐，稳定）**
+
+到 [Releases](../../releases) 页面下载 `Source code (zip)` 解压，或按标签克隆：
+
+```bash
+git clone --branch v1.0.0 --depth 1 https://github.com/laiyanhang7-byte/wechat-draft-pilot.git
+cd wechat-draft-pilot
+```
+
+**方式二：跟随主干（要最新踩坑修正）**
+
+```bash
+git clone https://github.com/laiyanhang7-byte/wechat-draft-pilot.git
+cd wechat-draft-pilot
+```
+
+**版本策略**：遵循语义化版本 `vX.Y.Z`；`main` 分支始终保持可运行，由 CI 三平台（Linux / Windows / macOS）× Python 3.8+3.12 矩阵把关。行为变更见 [CHANGELOG.md](CHANGELOG.md) 与 Release Notes。
 
 ## 快速开始
 
