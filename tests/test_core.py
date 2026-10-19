@@ -219,6 +219,71 @@ for fn in os.listdir(tmpd):
     os.remove(os.path.join(tmpd, fn))
 os.rmdir(tmpd)
 
+# ---------- 9. 硬性要求：桌面预览 HTML ----------
+check("safe_filename 去掉 Windows 非法字符",
+      wx_publish.safe_filename('a/b\\c:d*e?f"g<h>i|j') == "a_b_c_d_e_f_g_h_i_j",
+      wx_publish.safe_filename('a/b\\c:d*e?f"g<h>i|j'))
+check("safe_filename 空标题兜底", wx_publish.safe_filename("   ") == "未命名")
+check("safe_filename 超长截断", len(wx_publish.safe_filename("标" * 100)) == 40)
+
+check("ensure_utf8_meta 已有 charset 不重复注入",
+      wx_publish.ensure_utf8_meta('<head><meta charset="gbk"></head>').count("charset") == 1)
+_meta = wx_publish.ensure_utf8_meta("<html><head><title>t</title></head></html>")
+check("ensure_utf8_meta 无 charset 时注入到 head", 'charset="utf-8"' in _meta and _meta.index("charset") < _meta.index("title"), _meta[:60])
+_wrapped = wx_publish.ensure_utf8_meta("<p>裸片段</p>")
+check("ensure_utf8_meta 裸片段自动包文档", _wrapped.startswith("<!DOCTYPE") and "裸片段" in _wrapped)
+
+dd = wx_publish.desktop_dir()
+check("desktop_dir 返回字符串", isinstance(dd, str), dd or "(空)")
+check("desktop_dir 命中时目录真实存在", (dd == "") or os.path.isdir(dd), dd)
+
+_pv_dir = tempfile.mkdtemp(prefix="wx_prev_")
+_pv_path, _pv_ok = wx_publish.write_preview("<p>预览内容</p>", '标题/含非法:字符', _pv_dir)
+check("write_preview 生成文件", _pv_ok and os.path.exists(_pv_path), _pv_path)
+check("预览文件名带前缀与时间戳",
+      os.path.basename(_pv_path).startswith("公众号预览_") and ".html" in _pv_path,
+      os.path.basename(_pv_path))
+check("预览文件名已清理非法字符", "/" not in os.path.basename(_pv_path) and ":" not in os.path.basename(_pv_path))
+with open(_pv_path, encoding="utf-8") as _f:
+    _pv_html = _f.read()
+check("预览内容完整且声明 UTF-8", "预览内容" in _pv_html and "utf-8" in _pv_html.lower())
+os.remove(_pv_path)
+os.rmdir(_pv_dir)
+
+_orig_desktop = wx_publish.desktop_dir
+wx_publish.desktop_dir = lambda: ""          # 模拟无桌面环境（CI / 服务器）
+try:
+    check("无桌面目录时优雅降级（返回未生成，不抛异常）",
+          wx_publish.write_preview("<p>x</p>", "t") == ("", False))
+finally:
+    wx_publish.desktop_dir = _orig_desktop
+
+# ---------- 10. 硬性要求：发布后自动验收 ----------
+_sent = '<h2>一</h2><p>正文</p><h2>二</h2><img src="https://mmbiz.qpic.cn/a.jpg">'
+_ok_checks = wx_publish.verify_content(_sent, _sent, title="T", fetched_title="T")
+check("内容一致时验收全通过", all(c["pass"] for c in _ok_checks), str([c["name"] for c in _ok_checks if not c["pass"]]))
+check("验收项覆盖乱码三指标", {"乱码-\\u 转义残留", "乱码-二次编码 Ã", "乱码-替换符 U+FFFD"} <= {c["name"] for c in _ok_checks})
+
+_garbled = '<h2>一</h2><p>\\u4e2d</p>'
+_bad = wx_publish.verify_content(_sent, _garbled, title="T", fetched_title="T")
+check("服务器侧乱码被拦下", not all(c["pass"] for c in _bad))
+check("h2 数量不一致被拦下", any(c["name"] == "h2 章节数一致" and not c["pass"] for c in _bad))
+check("配图丢失被拦下", any(c["name"] == "正文配图数一致" and not c["pass"] for c in _bad))
+
+_title_mismatch = wx_publish.verify_content(_sent, _sent, title="标题A", fetched_title="标题B")
+check("标题不一致被拦下", any(c["name"] == "标题一致" and not c["pass"] for c in _title_mismatch))
+
+_no_video = wx_publish.verify_content("<p>无视频</p>", "<p>无视频</p>", expect_video=True)
+check("期望视频但服务器侧没有 iframe 被拦下",
+      any(c["name"] == "视频 iframe 存在" and not c["pass"] for c in _no_video))
+_dead_video = wx_publish.verify_content("<p>x</p>", '<iframe data-src="a"></iframe><mpvideo>',
+                                        expect_video=True)
+check("出现死路 mpvideo 标签被拦下",
+      any(c["name"] == "无死路 mpvideo 标签" and not c["pass"] for c in _dead_video))
+
+check("空正文被拦下", any(c["name"] == "正文非空" and not c["pass"]
+                        for c in wx_publish.verify_content("<p>x</p>", "   ")))
+
 # ---------- 7. 视频模板回归（与 test_video_iframe.py 互补：只看参数透传） ----------
 vf = video_iframe("wxv_1", "0.75", 800, "https://mmbiz.qpic.cn/c.jpg")
 check("video_iframe 参数全部透传",
