@@ -1,0 +1,392 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""模板抽取与校验工具。
+
+把 templates/<slug>/template.html 里的设计规格（配色 / 字体 / 字号 / 结构类 / 插画）
+抽成机器可读的 theme.json，并提供 --verify 做一致性对账，防止改模板时悄悄丢东西。
+
+用法:
+  python templates/extract.py                  # 抽取并写入 theme.json + registry.json
+  python templates/extract.py --verify          # 只校验，不写文件（CI / 提交前用）
+  python templates/extract.py --fetch-assets    # 下载插画到 assets/ 并登记指纹（需联网）
+  python templates/extract.py --wechat-report   # 输出公众号兼容性报告
+
+校验项（任一不过 → 退出码 1）：
+  1. template.html 的 sha256 与 theme.json 记录一致（模板未被偷偷改动）
+  2. :root 里每个色值都能在 HTML 中找到
+  3. 字体栈与 :root 完全一致
+  4. 插画清单双向对齐（HTML 里每个 src 都在清单里，清单里每个都在 HTML 里，次数一致）
+  5. 内联 SVG 数量一致
+  6. 模板自带说明面板里声明的每个色值，都真实存在于 CSS 变量中
+  7. 结构类（.kicker / h1.title 等）在 HTML 中确实被使用
+"""
+import argparse
+import hashlib
+import json
+import os
+import re
+import sys
+from collections import Counter
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+
+# slug → (中文名, 一句话定位)
+TEMPLATES = {
+    "cream-magazine": ("奶油杂志风", "大标题杂志排版，适合深度长文、品牌内容、生活方式"),
+    "dopamine-pop": ("多巴胺撞色风", "高饱和撞色 + 贴纸元素，适合轻松话题、活动种草"),
+    "forest-natural": ("森系自然风", "低饱和草木色 + 手绘枝丫，适合治愈、自然、慢生活"),
+}
+
+HEX_RE = re.compile(r"#[0-9A-Fa-f]{3,8}\b")
+ROOT_RE = re.compile(r":root\s*\{(.*?)\}", re.S)
+VAR_RE = re.compile(r"--([\w-]+)\s*:\s*([^;]+);")
+IMG_RE = re.compile(r'<img\b[^>]*?src="([^"]+)"[^>]*>', re.I)
+FONT_RE = re.compile(r"font-family\s*:\s*([^;}]+)")
+SIZE_RE = re.compile(r"font-size\s*:\s*([^;}]+)")
+
+
+def sha256_file(path):
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(65536), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def strip_tags(s):
+    return re.sub(r"<[^>]+>", "", s).strip()
+
+
+def parse_root(html):
+    """解析 :root 里的 CSS 变量，按值类型分成 colors / fonts / others"""
+    m = ROOT_RE.search(html)
+    if not m:
+        return {}, {}, {}
+    colors, fonts, others = {}, {}, {}
+    for name, raw in VAR_RE.findall(m.group(1)):
+        val = raw.strip()
+        if val.startswith("#") or val.lower().startswith(("rgb", "hsl")):
+            colors[name] = val
+        elif re.search(r"serif|sans|monospace|Microsoft|SimSun|PingFang|Noto|Songti", val, re.I):
+            fonts[name] = val
+        else:
+            others[name] = val
+    return colors, fonts, others
+
+
+def parse_panel(html):
+    """解析模板自带的「模板说明」面板：结构类 / 声明的配色 / 声明的字体"""
+    m = re.search(r'<aside class="panel".*?</aside>', html, re.S)
+    if not m:
+        return [], [], []
+    panel = m.group(0)
+    structure, declared_colors, declared_fonts = [], [], []
+    section = ""
+    for block in re.findall(r'<div class="(p-sec|cls|sw)">(.*?)</div>', panel, re.S):
+        kind, inner = block
+        text = strip_tags(inner).replace("\n", " ").strip()
+        if kind == "p-sec":
+            section = text
+            continue
+        if kind == "cls":
+            code = re.search(r"<code>(.*?)</code>", inner, re.S)
+            selector = strip_tags(code.group(1)) if code else ""
+            use = strip_tags(re.sub(r"<code>.*?</code>", "", inner, flags=re.S))
+            use = use.lstrip("· ").strip()
+            structure.append({"selector": selector, "use": use, "section": section})
+        elif kind == "sw":
+            hexes = HEX_RE.findall(text)
+            if hexes:
+                declared_colors.append({"text": text, "colors": hexes})
+            elif re.search(r"字体|宋体|黑体|Serif|Sans|字重", text, re.I):
+                declared_fonts.append(text)
+    return structure, declared_colors, declared_fonts
+
+
+def parse_images(html):
+    """插画清单：按 src 聚合出现次数，并记录出现位置（最近的 class 上下文）"""
+    images = Counter()
+    where = {}
+    for m in IMG_RE.finditer(html):
+        src = m.group(1)
+        if src.startswith("data:"):
+            continue
+        images[src] += 1
+        ctx = html[max(0, m.start() - 80):m.start()]
+        cls = re.findall(r'class="([^"]+)"', ctx)
+        if src not in where and cls:
+            where[src] = cls[-1]
+    return images, where
+
+
+def parse_inline_svg(html):
+    """内联 SVG（排除 <link> 里的 data URI favicon）"""
+    body = re.sub(r"<link\b[^>]*>", "", html, flags=re.I)
+    out = Counter()
+    for m in re.finditer(r"<svg\b([^>]*)>", body, re.I):
+        cls = re.search(r'class="([^"]+)"', m.group(1))
+        out[cls.group(1) if cls else "(无 class)"] += 1
+    return out
+
+
+def parse_external_deps(html):
+    urls = set()
+    for m in re.finditer(r'(?:href|src)="(https?://[^"]+)"', html, re.I):
+        u = m.group(1)
+        if "w3.org" in u or "doubaocdn.com" in u:
+            continue
+        urls.add(u)
+    return sorted(urls)
+
+
+def wechat_issues(html):
+    """公众号正文兼容性：这些写法在草稿箱里会被剥掉"""
+    issues = []
+    if re.search(r"<style\b", html, re.I):
+        issues.append("含 <style> 块 —— 公众号正文会剥离，样式需内联到元素 style 属性")
+    if re.search(r'<link\b[^>]*rel="stylesheet"', html, re.I):
+        issues.append("含外链样式表 —— 公众号不加载，需改用系统字体或内联")
+    if re.search(r"var\(--", html):
+        issues.append("使用 CSS 变量 var(--x) —— 公众号不支持，需展开为具体值")
+    if re.search(r"@media", html):
+        issues.append("含 @media 响应式规则 —— 公众号正文不生效（宽度由客户端决定）")
+    if re.search(r'<img[^>]+src="https?://(?!mmbiz)', html, re.I):
+        issues.append("含外链图片 —— 公众号正文会剥掉外链图，需先上传素材库换成 mmbiz 地址")
+    if re.search(r"<script\b", html, re.I):
+        issues.append("含 <script> —— 公众号正文禁止脚本，交互面板需删除")
+    return issues
+
+
+def extract(slug):
+    tpl_path = os.path.join(HERE, slug, "template.html")
+    if not os.path.exists(tpl_path):
+        raise SystemExit("缺少模板文件: %s" % tpl_path)
+    with open(tpl_path, encoding="utf-8") as f:
+        html = f.read()
+
+    colors, fonts, others = parse_root(html)
+    structure, declared_colors, declared_fonts = parse_panel(html)
+    images, where = parse_images(html)
+    svgs = parse_inline_svg(html)
+    name, tagline = TEMPLATES[slug]
+
+    asset_map = {}
+    manifest_path = os.path.join(HERE, slug, "assets", "manifest.json")
+    if os.path.exists(manifest_path):
+        with open(manifest_path, encoding="utf-8") as f:
+            asset_map = {a["url"]: a for a in json.load(f).get("assets", [])}
+
+    image_list = []
+    for url, count in sorted(images.items()):
+        item = {"url": url, "count": count, "where": where.get(url, "")}
+        if url in asset_map:
+            item.update({"file": asset_map[url]["file"], "sha256": asset_map[url]["sha256"],
+                         "bytes": asset_map[url]["bytes"], "size": asset_map[url]["size"]})
+        else:
+            item["file"] = ""
+        image_list.append(item)
+
+    return {
+        "slug": slug,
+        "name": name,
+        "tagline": tagline,
+        "source": "template.html",
+        "source_sha256": sha256_file(tpl_path),
+        "source_bytes": os.path.getsize(tpl_path),
+        "palette": colors,
+        "fonts": fonts,
+        "other_vars": others,
+        "all_hex_colors": dict(Counter(HEX_RE.findall(html)).most_common()),
+        "type_scale": sorted({s.strip() for s in SIZE_RE.findall(html) if s.strip().endswith("px")},
+                             key=lambda x: -float(x.rstrip("px"))),
+        "font_stacks_used": sorted({s.strip() for s in FONT_RE.findall(html)}),
+        "structure": structure,
+        "declared_colors": declared_colors,
+        "declared_fonts": declared_fonts,
+        "images": image_list,
+        "inline_svg": dict(svgs),
+        "external_deps": parse_external_deps(html),
+        "wechat_issues": wechat_issues(html),
+    }
+
+
+def verify(spec):
+    """对账：spec 是刚从 template.html 抽出来的，theme.json 是已登记的"""
+    slug = spec["slug"]
+    tpl_path = os.path.join(HERE, slug, "template.html")
+    with open(tpl_path, encoding="utf-8") as f:
+        html = f.read()
+    checks = []
+
+    def add(name, ok, detail=""):
+        checks.append({"template": slug, "check": name, "pass": bool(ok), "detail": detail})
+
+    json_path = os.path.join(HERE, slug, "theme.json")
+    if not os.path.exists(json_path):
+        add("theme.json 存在", False, json_path)
+        return checks
+    with open(json_path, encoding="utf-8") as f:
+        saved = json.load(f)
+
+    add("模板指纹未变", saved.get("source_sha256") == spec["source_sha256"],
+        "%s vs %s" % (str(saved.get("source_sha256"))[:12], spec["source_sha256"][:12]))
+    add("配色变量一致", saved.get("palette") == spec["palette"],
+        "登记 %d 色 / 实际 %d 色" % (len(saved.get("palette", {})), len(spec["palette"])))
+    add("字体栈一致", saved.get("fonts") == spec["fonts"],
+        "%s vs %s" % (list(saved.get("fonts", {}).values()), list(spec["fonts"].values())))
+
+    for name, val in spec["palette"].items():
+        add("色值 %s 真实存在于 HTML" % val, val.lower() in html.lower(), name)
+
+    saved_imgs = {i["url"]: i["count"] for i in saved.get("images", [])}
+    now_imgs = {i["url"]: i["count"] for i in spec["images"]}
+    add("插画清单一致", saved_imgs == now_imgs,
+        "登记 %d 张 / 实际 %d 张" % (len(saved_imgs), len(now_imgs)))
+    add("插画总数一致", sum(saved_imgs.values()) == sum(now_imgs.values()),
+        "%d vs %d" % (sum(saved_imgs.values()), sum(now_imgs.values())))
+    add("内联 SVG 一致", saved.get("inline_svg") == spec["inline_svg"],
+        "%s vs %s" % (saved.get("inline_svg"), spec["inline_svg"]))
+
+    # 模板自带说明面板声明的色值，必须都在 CSS 变量里（这就是"颜色要一致"）
+    palette_vals = {v.lower() for v in spec["palette"].values()}
+    for entry in spec["declared_colors"]:
+        for hx in entry["colors"]:
+            add("说明面板声明的 %s 在变量表中" % hx, hx.lower() in palette_vals, entry["text"][:30])
+
+    # 结构类必须真实存在于 HTML
+    for item in spec["structure"]:
+        sel = item["selector"]
+        token = sel.split()[-1] if sel else ""
+        cls = re.sub(r"^[a-z0-9]+", "", token).lstrip(".")
+        if not cls:
+            continue
+        add("结构类 %s 被使用" % token, ('class="%s' % cls) in html or (" %s" % cls) in html
+            or ("%s\"" % cls) in html, item["use"][:24])
+
+    return checks
+
+
+def write_registry(specs):
+    reg = {
+        "generated_by": "templates/extract.py",
+        "count": len(specs),
+        "templates": [{
+            "slug": s["slug"],
+            "name": s["name"],
+            "tagline": s["tagline"],
+            "palette": s["palette"],
+            "fonts": s["fonts"],
+            "images": len(s["images"]),
+            "structure_classes": len(s["structure"]),
+            "wechat_issues": len(s["wechat_issues"]),
+        } for s in specs],
+    }
+    with open(os.path.join(HERE, "registry.json"), "w", encoding="utf-8") as f:
+        json.dump(reg, f, ensure_ascii=False, indent=2)
+        f.write("\n")
+
+
+def fetch_assets(slug):
+    """下载插画到 assets/：等比缩到最长边 1400（公众号正文宽度≤720，2x 足够），记录指纹"""
+    import urllib.request
+    spec = extract(slug)
+    out_dir = os.path.join(HERE, slug, "assets")
+    os.makedirs(out_dir, exist_ok=True)
+    records = []
+    for item in spec["images"]:
+        url = item["url"]
+        asset_id = url.rstrip("/").split("/")[-1]
+        raw_path = os.path.join(out_dir, asset_id + ".raw")
+        final_path = os.path.join(out_dir, asset_id + ".jpg")
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+            with urllib.request.urlopen(req, timeout=60) as r, open(raw_path, "wb") as f:
+                f.write(r.read())
+        except Exception as e:
+            print("  下载失败 %s: %s" % (asset_id, e))
+            continue
+        size = None
+        try:
+            from PIL import Image
+            with Image.open(raw_path) as im:
+                im = im.convert("RGB")
+                im.thumbnail((1400, 1400), Image.LANCZOS)
+                im.save(final_path, "JPEG", quality=88, optimize=True)
+                size = list(im.size)
+            os.remove(raw_path)
+        except Exception:
+            os.replace(raw_path, final_path)
+        records.append({
+            "url": url,
+            "id": asset_id,
+            "file": "assets/" + os.path.basename(final_path),
+            "sha256": sha256_file(final_path),
+            "bytes": os.path.getsize(final_path),
+            "size": size,
+            "count": item["count"],
+            "where": item["where"],
+        })
+        print("  %s → %s (%d 字节%s)" % (asset_id, os.path.basename(final_path),
+                                        os.path.getsize(final_path),
+                                        " %dx%d" % tuple(size) if size else ""))
+    with open(os.path.join(out_dir, "manifest.json"), "w", encoding="utf-8") as f:
+        json.dump({"template": slug, "count": len(records), "assets": records},
+                  f, ensure_ascii=False, indent=2)
+        f.write("\n")
+    return records
+
+
+def main():
+    ap = argparse.ArgumentParser(description="模板抽取 / 校验 / 素材下载")
+    ap.add_argument("--verify", action="store_true", help="只校验不写文件")
+    ap.add_argument("--fetch-assets", action="store_true", help="下载插画到 assets/（需联网）")
+    ap.add_argument("--wechat-report", action="store_true", help="输出公众号兼容性报告")
+    ap.add_argument("--only", default="", help="只处理某个 slug")
+    args = ap.parse_args()
+
+    slugs = [args.only] if args.only else list(TEMPLATES)
+    for slug in slugs:
+        if slug not in TEMPLATES:
+            raise SystemExit("未知模板: %s（可选: %s）" % (slug, ", ".join(TEMPLATES)))
+
+    if args.fetch_assets:
+        for slug in slugs:
+            print("[%s] 下载插画" % slug)
+            fetch_assets(slug)
+        print('{"ok": true, "action": "fetch-assets"}')
+        return
+
+    specs = []
+    for slug in slugs:
+        spec = extract(slug)
+        specs.append(spec)
+        if not args.verify:
+            with open(os.path.join(HERE, slug, "theme.json"), "w", encoding="utf-8") as f:
+                json.dump(spec, f, ensure_ascii=False, indent=2)
+                f.write("\n")
+
+    if args.wechat_report:
+        for s in specs:
+            print("\n[%s] %s" % (s["slug"], s["name"]))
+            for issue in s["wechat_issues"]:
+                print("  ⚠ " + issue)
+        print()
+
+    checks = []
+    for slug in slugs:
+        checks.extend(verify(extract(slug)))
+    failed = [c for c in checks if not c["pass"]]
+    for c in checks:
+        if not c["pass"]:
+            print("FAIL [%s] %s  %s" % (c["template"], c["check"], c["detail"]))
+
+    if not args.verify and not args.only:
+        write_registry(specs)
+
+    print(json.dumps({"ok": not failed, "templates": len(slugs), "checks": len(checks),
+                      "failed": len(failed)}, ensure_ascii=False))
+    return 0 if not failed else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

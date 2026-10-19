@@ -78,6 +78,29 @@ python -X utf8 "$SK" video-list             # 素材库视频列表
 `scripts/svg_cards.py`：`click_reveal_card()`（点击展开）、`quiz_card()`（答题卡）。
 生成 HTML 片段拼进 content 即可，微信完整保留 animate click 动画。
 
+## 排版模板库（templates/）
+
+三套现成风格，配色 / 字体 / 字号 / 结构类 / 插画全部抽取成 `theme.json`，可直接取用：
+
+| slug | 风格 | 适用 |
+|---|---|---|
+| `cream-magazine` | 奶油杂志风（焦糖棕 + 大标题宋体） | 深度长文、品牌内容、生活方式 |
+| `dopamine-pop` | 多巴胺撞色风（高饱和 + 贴纸） | 轻松话题、活动种草 |
+| `forest-natural` | 森系自然风（草木绿 + 手绘枝丫） | 治愈、自然、慢生活 |
+
+用法：
+
+```bash
+python -X utf8 templates/extract.py --wechat-report   # 先看这套模板哪些写法公众号会剥
+cat templates/<slug>/theme.json                       # 取 palette / fonts / type_scale / structure
+```
+
+- 模板是**网页级**（含 `<style>`/CSS 变量/外链字体/外链图/脚本），**不能直接 publish**，
+  公众号会剥掉样式。要么照 `theme.json` 内联样式，要么改写成 md2wechat 主题（`#nice` 前缀）。
+- 插画已全部落盘到 `templates/<slug>/assets/`（11 张，带 sha256），不依赖外链。
+- 改模板后必须跑 `python -X utf8 templates/extract.py --verify` 与 `tests/test_templates.py`，
+  颜色/字体/插画任一项对不上都会 FAIL。
+
 ## 排版主题定制
 
 主题 = 普通 CSS：`<npm全局node_modules>/md2wechat/themes/markdown/<名字>.css`。

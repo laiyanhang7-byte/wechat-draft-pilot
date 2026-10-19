@@ -1,0 +1,173 @@
+{
+  "slug": "cream-magazine",
+  "name": "奶油杂志风",
+  "tagline": "大标题杂志排版，适合深度长文、品牌内容、生活方式",
+  "source": "template.html",
+  "source_sha256": "619ce373b390bfb815ff71c89c901a5f0d347fdc06e14f87f8c905d09ff2385f",
+  "source_bytes": 14955,
+  "palette": {
+    "paper": "#FDFBF7",
+    "ink": "#2E2A26",
+    "ink-soft": "#8B8278",
+    "caramel": "#B4815F",
+    "brown": "#6B4F3A",
+    "cream": "#F3E9DA",
+    "line": "#E7DCC9"
+  },
+  "fonts": {
+    "serif": "\"Noto Serif SC\",\"Songti SC\",SimSun,serif",
+    "sans": "\"Noto Sans SC\",\"Microsoft YaHei\",sans-serif"
+  },
+  "other_vars": {},
+  "all_hex_colors": {
+    "#fff": 4,
+    "#FDFBF7": 2,
+    "#2E2A26": 2,
+    "#B4815F": 2,
+    "#6B4F3A": 2,
+    "#F3E9DA": 2,
+    "#E7DCC9": 2,
+    "#8B8278": 1
+  },
+  "type_scale": [
+    "64px",
+    "42px",
+    "34px",
+    "30px",
+    "26px",
+    "24px",
+    "20px",
+    "19px",
+    "16.5px",
+    "15px",
+    "13px",
+    "12px",
+    "11.5px",
+    "11px"
+  ],
+  "font_stacks_used": [
+    "Consolas,monospace",
+    "var(--sans)",
+    "var(--serif)"
+  ],
+  "structure": [
+    {
+      "selector": ".kicker",
+      "use": "眉标（英文小字 + 横线）",
+      "section": "结构与样式类"
+    },
+    {
+      "selector": "h1.title",
+      "use": "超大衬线标题（900 字重）",
+      "section": "结构与样式类"
+    },
+    {
+      "selector": ".subtitle",
+      "use": "副标题与元信息",
+      "section": "结构与样式类"
+    },
+    {
+      "selector": ".lead",
+      "use": "导语（居中加粗）",
+      "section": "结构与样式类"
+    },
+    {
+      "selector": "h2.sec",
+      "use": "栏目编号标题 01 / 02 / 03",
+      "section": "结构与样式类"
+    },
+    {
+      "selector": ".quote",
+      "use": "超大字号金句引用",
+      "section": "结构与样式类"
+    },
+    {
+      "selector": "ul.list-note",
+      "use": "分隔线清单（编号）",
+      "section": "结构与样式类"
+    },
+    {
+      "selector": ".magframe",
+      "use": "杂志图框（奶油色厚框）",
+      "section": "结构与样式类"
+    },
+    {
+      "selector": ".ending",
+      "use": "结尾与 THE END",
+      "section": "结构与样式类"
+    }
+  ],
+  "declared_colors": [
+    {
+      "text": "纸白 #FDFBF7 ｜ 焦糖 #B4815F ｜ 深棕 #6B4F3A",
+      "colors": [
+        "#FDFBF7",
+        "#B4815F",
+        "#6B4F3A"
+      ]
+    },
+    {
+      "text": "奶油 #F3E9DA ｜ 正文 #2E2A26 ｜ 细线 #E7DCC9",
+      "colors": [
+        "#F3E9DA",
+        "#2E2A26",
+        "#E7DCC9"
+      ]
+    }
+  ],
+  "declared_fonts": [
+    "标题与正文：思源宋体（Serif 900）；眉标元信息：思源黑体。离线回退宋体。"
+  ],
+  "images": [
+    {
+      "url": "https://aka.doubaocdn.com/s/05mVAZ6DA7",
+      "count": 1,
+      "where": "side-deco s1",
+      "file": "assets/05mVAZ6DA7.jpg",
+      "sha256": "a9d7df50777046c3af1daaf6370dd6c708503a394fdd48e3f828e66b8cb752f3",
+      "bytes": 151750,
+      "size": [
+        1400,
+        1400
+      ]
+    },
+    {
+      "url": "https://aka.doubaocdn.com/s/5xKVityOgM",
+      "count": 1,
+      "where": "hero",
+      "file": "assets/5xKVityOgM.jpg",
+      "sha256": "85eac2b53e30d641f7e1b1e2dff5dbc49cab233a2e2218dd8dab402a0c563421",
+      "bytes": 217769,
+      "size": [
+        1400,
+        788
+      ]
+    },
+    {
+      "url": "https://aka.doubaocdn.com/s/KqQzK47Dc5",
+      "count": 2,
+      "where": "magframe",
+      "file": "assets/KqQzK47Dc5.jpg",
+      "sha256": "3cd60b0b533ba55aac7bce4215f42f2d198aedfbbd139b26db0ca034e06a2cd9",
+      "bytes": 328098,
+      "size": [
+        1400,
+        1400
+      ]
+    }
+  ],
+  "inline_svg": {
+    "(无 class)": 1
+  },
+  "external_deps": [
+    "https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500&display=swap"
+  ],
+  "wechat_issues": [
+    "含 <style> 块 —— 公众号正文会剥离，样式需内联到元素 style 属性",
+    "含外链样式表 —— 公众号不加载，需改用系统字体或内联",
+    "使用 CSS 变量 var(--x) —— 公众号不支持，需展开为具体值",
+    "含 @media 响应式规则 —— 公众号正文不生效（宽度由客户端决定）",
+    "含外链图片 —— 公众号正文会剥掉外链图，需先上传素材库换成 mmbiz 地址",
+    "含 <script> —— 公众号正文禁止脚本，交互面板需删除"
+  ]
+}

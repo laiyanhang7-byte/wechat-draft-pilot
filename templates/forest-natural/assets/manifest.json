@@ -1,0 +1,58 @@
+{
+  "template": "forest-natural",
+  "count": 4,
+  "assets": [
+    {
+      "url": "https://aka.doubaocdn.com/s/6MR0zqonOB",
+      "id": "6MR0zqonOB",
+      "file": "assets/6MR0zqonOB.jpg",
+      "sha256": "8680f1ffecaf99730134c2a25698719a7c44c54bb0cf7e1a342a0896246b49fc",
+      "bytes": 194221,
+      "size": [
+        1400,
+        1400
+      ],
+      "count": 4,
+      "where": "deco right"
+    },
+    {
+      "url": "https://aka.doubaocdn.com/s/9RRiC74mNY",
+      "id": "9RRiC74mNY",
+      "file": "assets/9RRiC74mNY.jpg",
+      "sha256": "71aca6fa7932de2ae53059aa6454849ff1df8123239c6db974464363f98073d3",
+      "bytes": 231247,
+      "size": [
+        1400,
+        1400
+      ],
+      "count": 3,
+      "where": "sticker"
+    },
+    {
+      "url": "https://aka.doubaocdn.com/s/V58cxAj3Kx",
+      "id": "V58cxAj3Kx",
+      "file": "assets/V58cxAj3Kx.jpg",
+      "sha256": "bfc05c67df103b04a1d50b507d6eb0b656474372732bac97067bdcf4467d836e",
+      "bytes": 281597,
+      "size": [
+        1400,
+        1400
+      ],
+      "count": 3,
+      "where": "deco left"
+    },
+    {
+      "url": "https://aka.doubaocdn.com/s/h9bJzzwPNM",
+      "id": "h9bJzzwPNM",
+      "file": "assets/h9bJzzwPNM.jpg",
+      "sha256": "4b677e887adc916ebbaf9e033d382bf78f5ff565c9da1396c19a01b156ec6b0d",
+      "bytes": 356929,
+      "size": [
+        1400,
+        1400
+      ],
+      "count": 2,
+      "where": "hero"
+    }
+  ]
+}

@@ -37,6 +37,7 @@ Markdown 写稿 ──► md2wechat 主题排版 ──► 自动封面 ──�
 ## 功能一览
 
 - **草稿箱全套**：publish（新建）/ update（全量更新）/ draft-list / draft-get（附乱码与结构自检）
+- **三套排版模板**：奶油杂志风 / 多巴胺撞色风 / 森系自然风，配色·字体·插画已结构化落盘并带校验
 - **桌面预览**：发布前自动把正文写成桌面 HTML，先看排版效果再决定发不发
 - **自动验收**：发布后自动拉回服务器侧内容逐项核对，不过即判失败（草稿不会"悄悄坏掉"）
 - **自动封面**：不传封面时按标题自动生成 900x383 文字封面（字体可配）
@@ -45,6 +46,24 @@ Markdown 写稿 ──► md2wechat 主题排版 ──► 自动封面 ──�
 - **配图修复**：aHash 感知哈希配对，一键修复素材接口重压缩导致的正文裂图
 - **干跑模式**：`--dry-run` 只做本地校验并打印摘要，不消耗任何接口调用
 - **机读输出**：所有命令成功时输出 `{"ok": true, ...}`，可无缝接入自动化流水线
+
+## 排版模板
+
+仓库内置三套完整文章排版模板，从原始 HTML 抽取成结构化规格（`theme.json`），
+配色、字体栈、字号层级、结构类、插画清单全部可机读，并带 sha256 指纹校验：
+
+| 模板 | 风格 | 适用 |
+|---|---|---|
+| `templates/cream-magazine` | 奶油杂志风 | 深度长文、品牌内容、生活方式 |
+| `templates/dopamine-pop` | 多巴胺撞色风 | 轻松话题、活动种草 |
+| `templates/forest-natural` | 森系自然风 | 治愈、自然、慢生活 |
+
+11 张插画已全部落盘（不依赖外链），`python -X utf8 templates/extract.py --verify` 会逐项核对
+颜色是否与 CSS 变量一致、字体栈是否被改、插画有没有丢。
+
+> ⚠️ 这三套是**网页级模板**（含 `<style>` / CSS 变量 / 外链字体 / 外链图 / 脚本），
+> 公众号正文会剥掉这些。要么当设计参考自己内联，要么按 `theme.json` 改写成 md2wechat 主题。
+> 具体见 [templates/README.md](templates/README.md)，跑 `--wechat-report` 可看每套的兼容问题清单。
 
 ## 在智能体 / CLI 中使用
 
@@ -189,6 +208,10 @@ python scripts/wx_publish.py draft-get <media_id> --check
 ├── examples/
 │   ├── demo_offline.py        # 零配置演示：封面 + SVG 卡片 + 预览页（不联网、无凭证）
 │   └── sample-article.md      # 示例稿件（表格/代码/列表齐全）
+├── templates/                 # 三套文章排版模板 + 规格抽取/校验工具
+│   ├── extract.py             # 抽取 theme.json / 校验 / 下载插画
+│   ├── registry.json          # 模板索引（自动生成）
+│   └── <slug>/                # template.html + theme.json + assets/
 ├── docs/
 │   ├── INSTALL.md             # 安装、凭证、IP 白名单
 │   └── pitfalls.md            # 踩坑全集（本仓库最有价值的部分之一）
