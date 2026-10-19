@@ -16,6 +16,8 @@ auto_cover.jpg
 svg_demo.html
 *.log
 examples/out/
+# 图片上传缓存（含本账号的 mmbiz 地址，因人而异，不入库）
+templates/*/assets/uploaded.json
 
 # 系统与编辑器
 .DS_Store
