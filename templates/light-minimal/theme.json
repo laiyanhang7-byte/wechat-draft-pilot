@@ -1,0 +1,152 @@
+{
+  "slug": "light-minimal",
+  "name": "轻简设计",
+  "tagline": "留白克制，适合品牌简述、产品介绍、简约风长文",
+  "kind": "inline",
+  "source": "template.html",
+  "source_sha256": "29b5322c98bbc6a6cd95a82a694976d8cde3b2b3f55f10cd5548faa8136a54aa",
+  "source_bytes": 22076,
+  "palette": {
+    "c1": "#000",
+    "c2": "#F7F7F7",
+    "c3": "#79AFBE",
+    "c4": "#fff",
+    "c5": "#FEFFFF",
+    "c6": "rgb(255,255,255)",
+    "c7": "#D55A5D"
+  },
+  "fonts": {},
+  "font_note": "模板未在样式中指定 font-family，使用公众号默认字体（非缺失）",
+  "other_vars": {},
+  "all_hex_colors": {
+    "rgb(255,255,255)": 1,
+    "#000": 33,
+    "#F7F7F7": 8,
+    "#79AFBE": 4,
+    "#D55A5D": 1,
+    "#FEFFFF": 3,
+    "#fff": 4
+  },
+  "type_scale": [
+    "12px",
+    "30px",
+    "18px",
+    "58px"
+  ],
+  "font_stacks_used": [],
+  "structure": [],
+  "declared_colors": [],
+  "declared_fonts": [],
+  "images": [
+    {
+      "url": "https://web2.xmyeditor.com/static/public/ewm.jpg",
+      "count": 1,
+      "where": "",
+      "file": "assets/ewm.jpg",
+      "sha256": "fa307598dd6e7c092c42a4766883cc5d1e980018f67ee56e984928791f63e54d",
+      "bytes": 8016,
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-datu/20221105/8859476b0126ffc51795fde7f46ff300.jpg",
+      "count": 3,
+      "where": "",
+      "file": "assets/8859476b0126ffc51795fde7f46ff300.jpg",
+      "sha256": "7ad77372756102fad51afceafd410f58ac5565a49453fe15e7c47da388c0f4a2",
+      "bytes": 56855,
+      "size": [
+        520,
+        325
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20221105/029721cb3ec8d1993234849464ac1cd7.png",
+      "count": 3,
+      "where": "",
+      "file": "assets/029721cb3ec8d1993234849464ac1cd7.png",
+      "sha256": "7ce17cc468f6586345a050dc5f39c3a1e6618199f99a3c16dc1aa4d3c2ff82d1",
+      "bytes": 3663,
+      "size": [
+        600,
+        97
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20221105/4b4842a7fd03162351fcaf8a170d1951.png",
+      "count": 3,
+      "where": "",
+      "file": "assets/4b4842a7fd03162351fcaf8a170d1951.png",
+      "sha256": "3c775a83f2453a60043a1494ab5b1abbd4ca99fb2138b70b12713e89aaa9d6e0",
+      "bytes": 2331,
+      "size": [
+        345,
+        50
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20221105/879eec005ae67fd79d64ba731b63aa88.png",
+      "count": 1,
+      "where": "",
+      "file": "assets/879eec005ae67fd79d64ba731b63aa88.png",
+      "sha256": "6d2145ee326371acd715a65391bef5c5ee4d943a129a3b86e6a6f6afd98586f4",
+      "bytes": 1576,
+      "size": [
+        208,
+        60
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20221105/cb381400f38ea3c9ee88cdcf1c208254.png",
+      "count": 1,
+      "where": "",
+      "file": "assets/cb381400f38ea3c9ee88cdcf1c208254.png",
+      "sha256": "f1f8dd527509c7352b13aae4f8a4542df17557c543492f6bc36b60703ebc2064",
+      "bytes": 3580,
+      "size": [
+        600,
+        123
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20221105/f36a2bacde27f90e01d693f952477613.png",
+      "count": 1,
+      "where": "",
+      "file": "assets/f36a2bacde27f90e01d693f952477613.png",
+      "sha256": "37965a2b3815136847710d91de969f4f8ebb4c9bace2d8ae693c8ab985eece13",
+      "bytes": 5549,
+      "size": [
+        64,
+        129
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20231125/958d76abc9508096a02cf94e60b22f8b.png",
+      "count": 2,
+      "where": "",
+      "file": "assets/958d76abc9508096a02cf94e60b22f8b.png",
+      "sha256": "51faac79d61b14840d68579b4a346ccb0da1ad7add9ceac5cd4b4b6defde640b",
+      "bytes": 219,
+      "size": [
+        21,
+        16
+      ]
+    }
+  ],
+  "inline_svg": {},
+  "external_deps": [
+    "https://web2.xmyeditor.com/static/public/ewm.jpg",
+    "https://web2.xmyeditor.com/sucai-datu/20221105/8859476b0126ffc51795fde7f46ff300.jpg",
+    "https://web2.xmyeditor.com/sucai-png/20221105/029721cb3ec8d1993234849464ac1cd7.png",
+    "https://web2.xmyeditor.com/sucai-png/20221105/4b4842a7fd03162351fcaf8a170d1951.png",
+    "https://web2.xmyeditor.com/sucai-png/20221105/879eec005ae67fd79d64ba731b63aa88.png",
+    "https://web2.xmyeditor.com/sucai-png/20221105/cb381400f38ea3c9ee88cdcf1c208254.png",
+    "https://web2.xmyeditor.com/sucai-png/20221105/f36a2bacde27f90e01d693f952477613.png",
+    "https://web2.xmyeditor.com/sucai-png/20231125/958d76abc9508096a02cf94e60b22f8b.png"
+  ],
+  "wechat_issues": [
+    "含外链图片 —— 公众号正文会剥掉外链图，需先上传素材库换成 mmbiz 地址"
+  ]
+}

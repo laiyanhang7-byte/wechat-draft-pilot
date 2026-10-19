@@ -49,21 +49,28 @@ Markdown 写稿 ──► md2wechat 主题排版 ──► 自动封面 ──�
 
 ## 排版模板
 
-仓库内置三套完整文章排版模板，从原始 HTML 抽取成结构化规格（`theme.json`），
-配色、字体栈、字号层级、结构类、插画清单全部可机读，并带 sha256 指纹校验：
+仓库内置 **10 套**文章排版模板，分两个族：
 
-| 模板 | 风格 | 适用 |
-|---|---|---|
-| `templates/cream-magazine` | 奶油杂志风 | 深度长文、品牌内容、生活方式 |
-| `templates/dopamine-pop` | 多巴胺撞色风 | 轻松话题、活动种草 |
-| `templates/forest-natural` | 森系自然风 | 治愈、自然、慢生活 |
+| 族 | 套数 | 能否直接发公众号 | 说明 |
+|---|---|---|---|
+| **内联族** | 7 | ✅ 可以 | 样式写在元素 `style` 上，只需把外链图换成素材库地址 |
+| **网页级** | 3 | ❌ 不可以 | 带 `<style>` / CSS 变量 / `@media`，需内联或改写成主题 |
 
-11 张插画已全部落盘（不依赖外链），`python -X utf8 templates/extract.py --verify` 会逐项核对
-颜色是否与 CSS 变量一致、字体栈是否被改、插画有没有丢。
+内联族：`踔厉奋发启新程` / `轻简设计` / `严谨务实总结提升` / `凝心聚力2024蓄力前行` /
+`回顾总结启新思` / `视觉极简` / `年底工作总结`（商务、总结、年会场景为主）。
 
-> ⚠️ 这三套是**网页级模板**（含 `<style>` / CSS 变量 / 外链字体 / 外链图 / 脚本），
-> 公众号正文会剥掉这些。要么当设计参考自己内联，要么按 `theme.json` 改写成 md2wechat 主题。
-> 具体见 [templates/README.md](templates/README.md)，跑 `--wechat-report` 可看每套的兼容问题清单。
+网页级：`奶油杂志风` / `多巴胺撞色风` / `森系自然风`。
+
+每套都抽取成结构化规格（`theme.json`）：配色、字体栈、字号层级、结构类、插画清单，
+**79 张插画全部落盘**（GIF 保留动画、PNG 保留透明），带 sha256 指纹。
+
+```bash
+python -X utf8 templates/extract.py --verify        # 190 项规格对账
+python -X utf8 tests/test_templates.py              # 380 项资产验收
+python -X utf8 templates/extract.py --wechat-report # 看哪套能直接发
+```
+
+详见 [templates/README.md](templates/README.md)。
 
 ## 在智能体 / CLI 中使用
 

@@ -1,0 +1,116 @@
+{
+  "slug": "year-end-summary",
+  "name": "年底工作总结",
+  "tagline": "稳重商务，适合年终总结、绩效汇报、成果展示",
+  "kind": "inline",
+  "source": "template.html",
+  "source_sha256": "52a74fe063e8c191c6afeba3df19676b5cfbcdf2f6a6b80539a7c964ead780ce",
+  "source_bytes": 18907,
+  "palette": {
+    "c1": "#BECFDD",
+    "c2": "#fff",
+    "c3": "rgb(96,96,96)",
+    "c4": "rgb(80,100,148)",
+    "c5": "#FFFFFF",
+    "c6": "rgb(255,255,255)",
+    "c7": "rgb(19,15,96)",
+    "c8": "#130F60"
+  },
+  "fonts": {},
+  "font_note": "模板未在样式中指定 font-family，使用公众号默认字体（非缺失）",
+  "other_vars": {},
+  "all_hex_colors": {
+    "#130F60": 1,
+    "#030349": 1,
+    "rgb(255,255,255)": 2,
+    "#fff": 7,
+    "rgb(19,15,96)": 2,
+    "#BECFDD": 15,
+    "rgb(96,96,96)": 5,
+    "rgb(80,100,148)": 3,
+    "#FFFFFF": 3
+  },
+  "type_scale": [
+    "30px",
+    "14px",
+    "16px",
+    "32px"
+  ],
+  "font_stacks_used": [],
+  "structure": [],
+  "declared_colors": [],
+  "declared_fonts": [],
+  "images": [
+    {
+      "url": "https://web2.xmyeditor.com/static/public/ewm.jpg",
+      "count": 1,
+      "where": "",
+      "file": "assets/ewm.jpg",
+      "sha256": "fa307598dd6e7c092c42a4766883cc5d1e980018f67ee56e984928791f63e54d",
+      "bytes": 8016,
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-gif/20241227/b28ee15747eb95b28a5e0119aaabf104.gif",
+      "count": 1,
+      "where": "xmyeditor buchai",
+      "file": "assets/b28ee15747eb95b28a5e0119aaabf104.gif",
+      "sha256": "49f62c6863e218dab6414ce8d7b81d5c36e6bb3ae08e5517573c7cc5d7690820",
+      "bytes": 381701,
+      "size": [
+        600,
+        565
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-jpg/20241227/d136029ec66abfe4f79594518055e6cf.jpg",
+      "count": 3,
+      "where": "",
+      "file": "assets/d136029ec66abfe4f79594518055e6cf.jpg",
+      "sha256": "c1ee9c4efbe5bc9f6299e06dc4cd6d3c55467719508e8722dbf1aaf480ce4403",
+      "bytes": 39500,
+      "size": [
+        461,
+        329
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20241227/59fa0b95b31ac2b9a517149dc6298f8e.png",
+      "count": 3,
+      "where": "xmyeditor buchai",
+      "file": "assets/59fa0b95b31ac2b9a517149dc6298f8e.png",
+      "sha256": "360f3b77d7de1f64fbe70e3db0946da7f2edc07e5e16da902acdb7d7ffa38ffe",
+      "bytes": 861,
+      "size": [
+        541,
+        20
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20241227/71b25bd32d85811a9c8c6420365803e1.png",
+      "count": 3,
+      "where": "xmyeditor buchai",
+      "file": "assets/71b25bd32d85811a9c8c6420365803e1.png",
+      "sha256": "77d1136170c5eacd91602296077cea3ed926697f76ca08347b0c26ba74803d86",
+      "bytes": 56125,
+      "size": [
+        243,
+        180
+      ]
+    }
+  ],
+  "inline_svg": {},
+  "external_deps": [
+    "https://web2.xmyeditor.com/static/public/ewm.jpg",
+    "https://web2.xmyeditor.com/sucai-gif/20241227/b28ee15747eb95b28a5e0119aaabf104.gif",
+    "https://web2.xmyeditor.com/sucai-jpg/20241227/d136029ec66abfe4f79594518055e6cf.jpg",
+    "https://web2.xmyeditor.com/sucai-png/20241227/59fa0b95b31ac2b9a517149dc6298f8e.png",
+    "https://web2.xmyeditor.com/sucai-png/20241227/71b25bd32d85811a9c8c6420365803e1.png"
+  ],
+  "wechat_issues": [
+    "含外链图片 —— 公众号正文会剥掉外链图，需先上传素材库换成 mmbiz 地址"
+  ]
+}

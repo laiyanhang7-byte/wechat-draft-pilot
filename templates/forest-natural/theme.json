@@ -2,6 +2,7 @@
   "slug": "forest-natural",
   "name": "森系自然风",
   "tagline": "低饱和草木色 + 手绘枝丫，适合治愈、自然、慢生活",
+  "kind": "css-var",
   "source": "template.html",
   "source_sha256": "09c0005ebd914ff084c246e74b7417ccc41505f3ef7709b0da587225f92fa242",
   "source_bytes": 17312,
@@ -20,6 +21,7 @@
     "serif": "\"Noto Serif SC\",\"Songti SC\",SimSun,serif",
     "sans": "\"Noto Sans SC\",\"Microsoft YaHei\",sans-serif"
   },
+  "font_note": "",
   "other_vars": {},
   "all_hex_colors": {
     "#fff": 10,
@@ -136,7 +138,7 @@
       "url": "https://aka.doubaocdn.com/s/6MR0zqonOB",
       "count": 4,
       "where": "deco right",
-      "file": "assets/6MR0zqonOB.jpg",
+      "file": "assets/6MR0zqonOB.png",
       "sha256": "8680f1ffecaf99730134c2a25698719a7c44c54bb0cf7e1a342a0896246b49fc",
       "bytes": 194221,
       "size": [
@@ -148,7 +150,7 @@
       "url": "https://aka.doubaocdn.com/s/9RRiC74mNY",
       "count": 3,
       "where": "sticker",
-      "file": "assets/9RRiC74mNY.jpg",
+      "file": "assets/9RRiC74mNY.png",
       "sha256": "71aca6fa7932de2ae53059aa6454849ff1df8123239c6db974464363f98073d3",
       "bytes": 231247,
       "size": [
@@ -160,7 +162,7 @@
       "url": "https://aka.doubaocdn.com/s/V58cxAj3Kx",
       "count": 3,
       "where": "deco left",
-      "file": "assets/V58cxAj3Kx.jpg",
+      "file": "assets/V58cxAj3Kx.png",
       "sha256": "bfc05c67df103b04a1d50b507d6eb0b656474372732bac97067bdcf4467d836e",
       "bytes": 281597,
       "size": [
@@ -172,7 +174,7 @@
       "url": "https://aka.doubaocdn.com/s/h9bJzzwPNM",
       "count": 2,
       "where": "hero",
-      "file": "assets/h9bJzzwPNM.jpg",
+      "file": "assets/h9bJzzwPNM.png",
       "sha256": "4b677e887adc916ebbaf9e033d382bf78f5ff565c9da1396c19a01b156ec6b0d",
       "bytes": 356929,
       "size": [

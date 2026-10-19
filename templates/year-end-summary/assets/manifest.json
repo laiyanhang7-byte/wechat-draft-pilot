@@ -1,0 +1,71 @@
+{
+  "template": "year-end-summary",
+  "count": 5,
+  "assets": [
+    {
+      "url": "https://web2.xmyeditor.com/static/public/ewm.jpg",
+      "id": "ewm",
+      "file": "assets/ewm.jpg",
+      "sha256": "fa307598dd6e7c092c42a4766883cc5d1e980018f67ee56e984928791f63e54d",
+      "bytes": 8016,
+      "size": [
+        300,
+        300
+      ],
+      "count": 1,
+      "where": ""
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-gif/20241227/b28ee15747eb95b28a5e0119aaabf104.gif",
+      "id": "b28ee15747eb95b28a5e0119aaabf104",
+      "file": "assets/b28ee15747eb95b28a5e0119aaabf104.gif",
+      "sha256": "49f62c6863e218dab6414ce8d7b81d5c36e6bb3ae08e5517573c7cc5d7690820",
+      "bytes": 381701,
+      "size": [
+        600,
+        565
+      ],
+      "count": 1,
+      "where": "xmyeditor buchai"
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-jpg/20241227/d136029ec66abfe4f79594518055e6cf.jpg",
+      "id": "d136029ec66abfe4f79594518055e6cf",
+      "file": "assets/d136029ec66abfe4f79594518055e6cf.jpg",
+      "sha256": "c1ee9c4efbe5bc9f6299e06dc4cd6d3c55467719508e8722dbf1aaf480ce4403",
+      "bytes": 39500,
+      "size": [
+        461,
+        329
+      ],
+      "count": 3,
+      "where": ""
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20241227/59fa0b95b31ac2b9a517149dc6298f8e.png",
+      "id": "59fa0b95b31ac2b9a517149dc6298f8e",
+      "file": "assets/59fa0b95b31ac2b9a517149dc6298f8e.png",
+      "sha256": "360f3b77d7de1f64fbe70e3db0946da7f2edc07e5e16da902acdb7d7ffa38ffe",
+      "bytes": 861,
+      "size": [
+        541,
+        20
+      ],
+      "count": 3,
+      "where": "xmyeditor buchai"
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20241227/71b25bd32d85811a9c8c6420365803e1.png",
+      "id": "71b25bd32d85811a9c8c6420365803e1",
+      "file": "assets/71b25bd32d85811a9c8c6420365803e1.png",
+      "sha256": "77d1136170c5eacd91602296077cea3ed926697f76ca08347b0c26ba74803d86",
+      "bytes": 56125,
+      "size": [
+        243,
+        180
+      ],
+      "count": 3,
+      "where": "xmyeditor buchai"
+    }
+  ]
+}

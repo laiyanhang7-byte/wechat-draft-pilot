@@ -1,0 +1,195 @@
+{
+  "slug": "chuli-fenfa",
+  "name": "踔厉奋发启新程",
+  "tagline": "红金商务，适合年度总结、动员大会、开门红",
+  "kind": "inline",
+  "source": "template.html",
+  "source_sha256": "745d4d5856ce05355a7f9d7d64bc40c328d001d497ef91bb5036a8fa3905dfb8",
+  "source_bytes": 21885,
+  "palette": {
+    "c1": "#CBA276",
+    "c2": "#fff",
+    "c3": "#333",
+    "c4": "#D5AD8A",
+    "c5": "#FFFFFF",
+    "c6": "#EFAB0A",
+    "c7": "#DF853B",
+    "c8": "#415959"
+  },
+  "fonts": {},
+  "font_note": "模板未在样式中指定 font-family，使用公众号默认字体（非缺失）",
+  "other_vars": {},
+  "all_hex_colors": {
+    "#FFFFFF": 1,
+    "#EFAB0A": 1,
+    "#DF853B": 1,
+    "#fff": 7,
+    "#415959": 1,
+    "#BB2429": 1,
+    "#D5AD8A": 2,
+    "#333": 6,
+    "#CBA276": 9,
+    "#D4AC89": 1
+  },
+  "type_scale": [
+    "30px",
+    "12px",
+    "16px",
+    "31px"
+  ],
+  "font_stacks_used": [],
+  "structure": [],
+  "declared_colors": [],
+  "declared_fonts": [],
+  "images": [
+    {
+      "url": "https://web2.xmyeditor.com/static/public/ewm.jpg",
+      "count": 1,
+      "where": "",
+      "file": "assets/ewm.jpg",
+      "sha256": "fa307598dd6e7c092c42a4766883cc5d1e980018f67ee56e984928791f63e54d",
+      "bytes": 8016,
+      "size": [
+        300,
+        300
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-jpg/20241122/b609c5b13e5ad35fd179104b2799d8fa.jpg",
+      "count": 3,
+      "where": "",
+      "file": "assets/b609c5b13e5ad35fd179104b2799d8fa.jpg",
+      "sha256": "7dfb2545f41a80228473f7c61e28311df4c71fbdbeccf8b8c901c6dfc481cb98",
+      "bytes": 24967,
+      "size": [
+        461,
+        340
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20241122/076b58e998cc396c0a64416a37f9f2e3.png",
+      "count": 3,
+      "where": "",
+      "file": "assets/076b58e998cc396c0a64416a37f9f2e3.png",
+      "sha256": "fcefde5a6e5e73ab3ccf09a142a054da8c9ee601188c9713776969b01d76ac98",
+      "bytes": 777,
+      "size": [
+        96,
+        96
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20241122/2a6992871cb47d877afd037484842199.png",
+      "count": 1,
+      "where": "",
+      "file": "assets/2a6992871cb47d877afd037484842199.png",
+      "sha256": "95fcb4458fd90d13a9efc0f02e8329de34b0749a38a4fac42a97b98a6e4d4550",
+      "bytes": 503,
+      "size": [
+        59,
+        59
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20241122/48449604d967d18d5bd1703162b8b30e.png",
+      "count": 1,
+      "where": "",
+      "file": "assets/48449604d967d18d5bd1703162b8b30e.png",
+      "sha256": "f23553315b8f71b9903b6896d398209d3b524f26ae32b283f8dee1219d8fcd77",
+      "bytes": 2651,
+      "size": [
+        193,
+        193
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20241122/79b365b317a573cf76510cb117e95921.png",
+      "count": 1,
+      "where": "",
+      "file": "assets/79b365b317a573cf76510cb117e95921.png",
+      "sha256": "73cf39e55bb27290c5c85bc7d1cb2c01d9baa80ab016829c8eb39b7ce6b996a0",
+      "bytes": 488,
+      "size": [
+        60,
+        60
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20241122/864d87e4355feca16d8ecaf1e034c447.png",
+      "count": 3,
+      "where": "",
+      "file": "assets/864d87e4355feca16d8ecaf1e034c447.png",
+      "sha256": "6f779706979b6167bd59ddbd5ecc8ac2b24ec978c12de00190ae99a044d8291d",
+      "bytes": 551,
+      "size": [
+        68,
+        67
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20241122/9ae122fd9b431e695de5dc1351d5ac86.png",
+      "count": 1,
+      "where": "xmyeditor ",
+      "file": "assets/9ae122fd9b431e695de5dc1351d5ac86.png",
+      "sha256": "a330d3ed1a88f9f1652b05447c268e35b6ad96261e38d615b837dd39edd0fd99",
+      "bytes": 50387,
+      "size": [
+        601,
+        133
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20241122/ab1d453f6dda236e6f7efd90281037e9.png",
+      "count": 3,
+      "where": "",
+      "file": "assets/ab1d453f6dda236e6f7efd90281037e9.png",
+      "sha256": "b84f9f1e75e2f2c75aacff2fb792c79cdcc2624ffe204a2c716569c3639c9624",
+      "bytes": 698,
+      "size": [
+        61,
+        61
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20241122/be3ad06f65d9ded79032da4aef028b20.png",
+      "count": 3,
+      "where": "",
+      "file": "assets/be3ad06f65d9ded79032da4aef028b20.png",
+      "sha256": "7642476883c4f4e49428d19994ba17f4c88981df1e4f46788db0b405a0d1ab27",
+      "bytes": 621,
+      "size": [
+        61,
+        61
+      ]
+    },
+    {
+      "url": "https://web2.xmyeditor.com/sucai-png/20241122/cb5ee0e07f02e8e5883ee8a4876a970f.png",
+      "count": 1,
+      "where": "",
+      "file": "assets/cb5ee0e07f02e8e5883ee8a4876a970f.png",
+      "sha256": "cf8930486a29f6d42354410fa570d4680fa1c5f0d257a550a080f517083c439d",
+      "bytes": 881,
+      "size": [
+        163,
+        163
+      ]
+    }
+  ],
+  "inline_svg": {},
+  "external_deps": [
+    "https://web2.xmyeditor.com/static/public/ewm.jpg",
+    "https://web2.xmyeditor.com/sucai-jpg/20241122/b609c5b13e5ad35fd179104b2799d8fa.jpg",
+    "https://web2.xmyeditor.com/sucai-png/20241122/076b58e998cc396c0a64416a37f9f2e3.png",
+    "https://web2.xmyeditor.com/sucai-png/20241122/2a6992871cb47d877afd037484842199.png",
+    "https://web2.xmyeditor.com/sucai-png/20241122/48449604d967d18d5bd1703162b8b30e.png",
+    "https://web2.xmyeditor.com/sucai-png/20241122/79b365b317a573cf76510cb117e95921.png",
+    "https://web2.xmyeditor.com/sucai-png/20241122/864d87e4355feca16d8ecaf1e034c447.png",
+    "https://web2.xmyeditor.com/sucai-png/20241122/9ae122fd9b431e695de5dc1351d5ac86.png",
+    "https://web2.xmyeditor.com/sucai-png/20241122/ab1d453f6dda236e6f7efd90281037e9.png",
+    "https://web2.xmyeditor.com/sucai-png/20241122/be3ad06f65d9ded79032da4aef028b20.png",
+    "https://web2.xmyeditor.com/sucai-png/20241122/cb5ee0e07f02e8e5883ee8a4876a970f.png"
+  ],
+  "wechat_issues": [
+    "含外链图片 —— 公众号正文会剥掉外链图，需先上传素材库换成 mmbiz 地址"
+  ]
+}

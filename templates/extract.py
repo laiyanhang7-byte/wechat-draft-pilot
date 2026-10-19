@@ -30,11 +30,20 @@ from collections import Counter
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
-# slug → (中文名, 一句话定位)
+# slug → (中文名, 一句话定位, 模板族)
+#   css-var : 网页级模板（:root 变量 + <style> 块），需内联或改写才能进公众号
+#   inline  : 内联样式模板（样式直接写在元素 style 上），可直接进公众号
 TEMPLATES = {
-    "cream-magazine": ("奶油杂志风", "大标题杂志排版，适合深度长文、品牌内容、生活方式"),
-    "dopamine-pop": ("多巴胺撞色风", "高饱和撞色 + 贴纸元素，适合轻松话题、活动种草"),
-    "forest-natural": ("森系自然风", "低饱和草木色 + 手绘枝丫，适合治愈、自然、慢生活"),
+    "cream-magazine": ("奶油杂志风", "大标题杂志排版，适合深度长文、品牌内容、生活方式", "css-var"),
+    "dopamine-pop": ("多巴胺撞色风", "高饱和撞色 + 贴纸元素，适合轻松话题、活动种草", "css-var"),
+    "forest-natural": ("森系自然风", "低饱和草木色 + 手绘枝丫，适合治愈、自然、慢生活", "css-var"),
+    "chuli-fenfa": ("踔厉奋发启新程", "红金商务，适合年度总结、动员大会、开门红", "inline"),
+    "light-minimal": ("轻简设计", "留白克制，适合品牌简述、产品介绍、简约风长文", "inline"),
+    "rigorous-summary": ("严谨务实总结提升", "蓝灰稳重，适合部门总结、述职报告、工作复盘", "inline"),
+    "cohesion-2024": ("凝心聚力2024蓄力前行", "红蓝撞色，适合年会、团队动员、年度规划", "inline"),
+    "review-new-ideas": ("回顾总结启新思", "暖橙复古，适合季度回顾、项目复盘、经验沉淀", "inline"),
+    "visual-minimal": ("视觉极简", "黑白极简，适合观点输出、深度评论、极简审美", "inline"),
+    "year-end-summary": ("年底工作总结", "稳重商务，适合年终总结、绩效汇报、成果展示", "inline"),
 }
 
 HEX_RE = re.compile(r"#[0-9A-Fa-f]{3,8}\b")
@@ -164,6 +173,38 @@ def wechat_issues(html):
     return issues
 
 
+def parse_inline_styles(html, top_n=8):
+    """内联样式族（小墨鹰系）：样式写在元素 style 属性上，没有 :root 也没有 <style>。
+
+    配色从 style="..." 里出现的色值统计（按频次取前 N），字体同理。
+    """
+    styles = re.findall(r'style="([^"]*)"', html)
+    colors = Counter()
+    fonts = Counter()
+    sizes = Counter()
+    for s in styles:
+        for c in re.findall(r"#[0-9A-Fa-f]{3,8}\b", s):
+            colors[c.upper() if len(c) == 7 else c] += 1
+        for c in re.findall(r"rgba?\([^)]+\)", s):
+            colors[c.replace(" ", "")] += 1
+        for f in re.findall(r"font-family\s*:\s*([^;\"']+)", s):
+            fonts[f.strip()] += 1
+        for z in re.findall(r"font-size\s*:\s*(\d+(?:\.\d+)?px)", s):
+            sizes[z] += 1
+    palette = {}
+    for i, (val, _n) in enumerate(colors.most_common(top_n), 1):
+        palette["c%d" % i] = val
+    font_map = {}
+    for i, (val, _n) in enumerate(fonts.most_common(4), 1):
+        font_map["f%d" % i] = val
+    return palette, font_map, dict(colors), [z for z, _ in sizes.most_common()]
+
+
+def parse_inline_images(html):
+    """内联族的插画：xmyeditor 素材（png/gif 装饰件）"""
+    return parse_images(html)
+
+
 def extract(slug):
     tpl_path = os.path.join(HERE, slug, "template.html")
     if not os.path.exists(tpl_path):
@@ -171,11 +212,22 @@ def extract(slug):
     with open(tpl_path, encoding="utf-8") as f:
         html = f.read()
 
-    colors, fonts, others = parse_root(html)
-    structure, declared_colors, declared_fonts = parse_panel(html)
+    name, tagline, kind = TEMPLATES[slug]
     images, where = parse_images(html)
     svgs = parse_inline_svg(html)
-    name, tagline = TEMPLATES[slug]
+
+    if kind == "css-var":
+        colors, fonts, others = parse_root(html)
+        structure, declared_colors, declared_fonts = parse_panel(html)
+        all_colors = dict(Counter(HEX_RE.findall(html)).most_common())
+        type_scale = sorted({s.strip() for s in SIZE_RE.findall(html) if s.strip().endswith("px")},
+                            key=lambda x: -float(x.rstrip("px")))
+        font_stacks = sorted({s.strip() for s in FONT_RE.findall(html)})
+    else:
+        colors, fonts, all_colors, type_scale = parse_inline_styles(html)
+        others = {}
+        structure, declared_colors, declared_fonts = [], [], []
+        font_stacks = sorted({s for s in FONT_RE.findall(html)})
 
     asset_map = {}
     manifest_path = os.path.join(HERE, slug, "assets", "manifest.json")
@@ -197,16 +249,18 @@ def extract(slug):
         "slug": slug,
         "name": name,
         "tagline": tagline,
+        "kind": kind,
         "source": "template.html",
         "source_sha256": sha256_file(tpl_path, text=True),
         "source_bytes": os.path.getsize(tpl_path),
         "palette": colors,
         "fonts": fonts,
+        "font_note": ("" if fonts else
+                      "模板未在样式中指定 font-family，使用公众号默认字体（非缺失）"),
         "other_vars": others,
-        "all_hex_colors": dict(Counter(HEX_RE.findall(html)).most_common()),
-        "type_scale": sorted({s.strip() for s in SIZE_RE.findall(html) if s.strip().endswith("px")},
-                             key=lambda x: -float(x.rstrip("px"))),
-        "font_stacks_used": sorted({s.strip() for s in FONT_RE.findall(html)}),
+        "all_hex_colors": all_colors,
+        "type_scale": type_scale,
+        "font_stacks_used": font_stacks,
         "structure": structure,
         "declared_colors": declared_colors,
         "declared_fonts": declared_fonts,
@@ -237,13 +291,19 @@ def verify(spec):
 
     add("模板指纹未变", saved.get("source_sha256") == spec["source_sha256"],
         "%s vs %s" % (str(saved.get("source_sha256"))[:12], spec["source_sha256"][:12]))
+    add("模板族未变", saved.get("kind") == spec["kind"], str(spec["kind"]))
     add("配色变量一致", saved.get("palette") == spec["palette"],
         "登记 %d 色 / 实际 %d 色" % (len(saved.get("palette", {})), len(spec["palette"])))
     add("字体栈一致", saved.get("fonts") == spec["fonts"],
         "%s vs %s" % (list(saved.get("fonts", {}).values()), list(spec["fonts"].values())))
 
+    # 色值比对时忽略空格差异（rgb(255, 255, 255) vs rgb(255,255,255)）
+    html_lower = html.lower()
+    html_nospace = re.sub(r"\s+", "", html_lower)
     for name, val in spec["palette"].items():
-        add("色值 %s 真实存在于 HTML" % val, val.lower() in html.lower(), name)
+        v = val.lower()
+        add("色值 %s 真实存在于 HTML" % val,
+            v in html_lower or re.sub(r"\s+", "", v) in html_nospace, name)
 
     saved_imgs = {i["url"]: i["count"] for i in saved.get("images", [])}
     now_imgs = {i["url"]: i["count"] for i in spec["images"]}
@@ -254,21 +314,21 @@ def verify(spec):
     add("内联 SVG 一致", saved.get("inline_svg") == spec["inline_svg"],
         "%s vs %s" % (saved.get("inline_svg"), spec["inline_svg"]))
 
-    # 模板自带说明面板声明的色值，必须都在 CSS 变量里（这就是"颜色要一致"）
-    palette_vals = {v.lower() for v in spec["palette"].values()}
-    for entry in spec["declared_colors"]:
-        for hx in entry["colors"]:
-            add("说明面板声明的 %s 在变量表中" % hx, hx.lower() in palette_vals, entry["text"][:30])
+    # 以下两类只对网页级模板（带说明面板）有意义
+    if spec["kind"] == "css-var":
+        palette_vals = {v.lower() for v in spec["palette"].values()}
+        for entry in spec["declared_colors"]:
+            for hx in entry["colors"]:
+                add("说明面板声明的 %s 在变量表中" % hx, hx.lower() in palette_vals, entry["text"][:30])
 
-    # 结构类必须真实存在于 HTML
-    for item in spec["structure"]:
-        sel = item["selector"]
-        token = sel.split()[-1] if sel else ""
-        cls = re.sub(r"^[a-z0-9]+", "", token).lstrip(".")
-        if not cls:
-            continue
-        add("结构类 %s 被使用" % token, ('class="%s' % cls) in html or (" %s" % cls) in html
-            or ("%s\"" % cls) in html, item["use"][:24])
+        for item in spec["structure"]:
+            sel = item["selector"]
+            token = sel.split()[-1] if sel else ""
+            cls = re.sub(r"^[a-z0-9]+", "", token).lstrip(".")
+            if not cls:
+                continue
+            add("结构类 %s 被使用" % token, ('class="%s' % cls) in html or (" %s" % cls) in html
+                or ("%s\"" % cls) in html, item["use"][:24])
 
     return checks
 
@@ -280,6 +340,7 @@ def write_registry(specs):
         "templates": [{
             "slug": s["slug"],
             "name": s["name"],
+            "kind": s["kind"],
             "tagline": s["tagline"],
             "palette": s["palette"],
             "fonts": s["fonts"],
@@ -294,8 +355,17 @@ def write_registry(specs):
 
 
 def fetch_assets(slug):
-    """下载插画到 assets/：等比缩到最长边 1400（公众号正文宽度≤720，2x 足够），记录指纹"""
+    """下载插画到 assets/，按原格式保存，记录指纹。
+
+    格式处理原则（保真优先）：
+      - GIF  → 原样保存（动图重新编码会变静图）
+      - PNG  → 保留 alpha 通道，超大才等比缩到 1400，仍存 PNG（转 JPEG 会把透明背景变白块）
+      - JPEG → 等比缩到最长边 1400，quality 88
+    已存在的文件跳过，避免二次有损编码。
+    """
     import urllib.request
+    from PIL import Image
+
     spec = extract(slug)
     out_dir = os.path.join(HERE, slug, "assets")
     os.makedirs(out_dir, exist_ok=True)
@@ -303,39 +373,77 @@ def fetch_assets(slug):
     for item in spec["images"]:
         url = item["url"]
         asset_id = url.rstrip("/").split("/")[-1]
-        raw_path = os.path.join(out_dir, asset_id + ".raw")
-        final_path = os.path.join(out_dir, asset_id + ".jpg")
+        ext = os.path.splitext(asset_id)[1].lower()
+        if ext not in (".png", ".gif", ".jpg", ".jpeg", ".webp"):
+            ext = ".png"
+        stem = os.path.splitext(asset_id)[0]
+        final_path = os.path.join(out_dir, stem + ext)
+
+        if os.path.exists(final_path):
+            size = None
+            try:
+                with Image.open(final_path) as im:
+                    size = list(im.size)
+            except Exception:
+                pass
+            records.append({"url": url, "id": stem,
+                            "file": "assets/" + os.path.basename(final_path),
+                            "sha256": sha256_file(final_path),
+                            "bytes": os.path.getsize(final_path), "size": size,
+                            "count": item["count"], "where": item["where"]})
+            print("  %s 已存在，跳过" % stem)
+            continue
+
+        raw_path = os.path.join(out_dir, stem + ".raw")
         try:
             req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
             with urllib.request.urlopen(req, timeout=60) as r, open(raw_path, "wb") as f:
                 f.write(r.read())
         except Exception as e:
-            print("  下载失败 %s: %s" % (asset_id, e))
+            print("  下载失败 %s: %s" % (stem, e))
             continue
+
         size = None
+        keep_raw = False
         try:
-            from PIL import Image
             with Image.open(raw_path) as im:
-                im = im.convert("RGB")
-                im.thumbnail((1400, 1400), Image.LANCZOS)
-                im.save(final_path, "JPEG", quality=88, optimize=True)
-                size = list(im.size)
-            os.remove(raw_path)
+                fmt = (im.format or "").upper()
+                if fmt == "GIF":
+                    # 动图/透明 GIF 原样保留（必须等句柄关闭后再移动，Windows 上打开的文件不能 replace）
+                    size = list(im.size)
+                    keep_raw = True
+                elif fmt == "PNG":
+                    im2 = im.convert("RGBA")
+                    im2.thumbnail((1400, 1400), Image.LANCZOS)
+                    im2.save(final_path, "PNG", optimize=True)
+                    size = list(im2.size)
+                    os.remove(raw_path)
+                else:
+                    im2 = im.convert("RGB")
+                    im2.thumbnail((1400, 1400), Image.LANCZOS)
+                    im2.save(final_path, "JPEG", quality=88, optimize=True)
+                    size = list(im2.size)
+                    os.remove(raw_path)
         except Exception:
+            keep_raw = True
+        if keep_raw and os.path.exists(raw_path):
             os.replace(raw_path, final_path)
-        records.append({
-            "url": url,
-            "id": asset_id,
-            "file": "assets/" + os.path.basename(final_path),
-            "sha256": sha256_file(final_path),
-            "bytes": os.path.getsize(final_path),
-            "size": size,
-            "count": item["count"],
-            "where": item["where"],
-        })
-        print("  %s → %s (%d 字节%s)" % (asset_id, os.path.basename(final_path),
+            if size is None:
+                try:
+                    with Image.open(final_path) as im:
+                        size = list(im.size)
+                except Exception:
+                    pass
+
+        records.append({"url": url, "id": stem,
+                        "file": "assets/" + os.path.basename(final_path),
+                        "sha256": sha256_file(final_path),
+                        "bytes": os.path.getsize(final_path), "size": size,
+                        "count": item["count"], "where": item["where"]})
+        print("  %s → %s (%d 字节%s)" % (stem, os.path.basename(final_path),
                                         os.path.getsize(final_path),
                                         " %dx%d" % tuple(size) if size else ""))
+
     with open(os.path.join(out_dir, "manifest.json"), "w", encoding="utf-8") as f:
         json.dump({"template": slug, "count": len(records), "assets": records},
                   f, ensure_ascii=False, indent=2)
