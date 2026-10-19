@@ -45,11 +45,18 @@ FONT_RE = re.compile(r"font-family\s*:\s*([^;}]+)")
 SIZE_RE = re.compile(r"font-size\s*:\s*([^;}]+)")
 
 
-def sha256_file(path):
+def sha256_file(path, text=False):
+    """内容指纹。
+
+    text=True：按 LF 归一化后计算，避免 Windows 检出成 CRLF 导致误报（仅用于 HTML/JSON 等文本）
+    text=False：按原始字节计算，二进制（JPEG 内部也有 0D0A 字节）绝不做归一化
+    """
     h = hashlib.sha256()
     with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(65536), b""):
-            h.update(chunk)
+        data = f.read()
+    if text:
+        data = data.replace(b"\r\n", b"\n")
+    h.update(data)
     return h.hexdigest()
 
 
@@ -191,7 +198,7 @@ def extract(slug):
         "name": name,
         "tagline": tagline,
         "source": "template.html",
-        "source_sha256": sha256_file(tpl_path),
+        "source_sha256": sha256_file(tpl_path, text=True),
         "source_bytes": os.path.getsize(tpl_path),
         "palette": colors,
         "fonts": fonts,

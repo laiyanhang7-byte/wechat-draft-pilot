@@ -1,0 +1,12 @@
+# 模板文件的字节内容必须原样保留：theme.json 里登记了 sha256，
+# 一旦被 Git 自动转换换行符（Windows 检出 CRLF），指纹校验就会误报。
+templates/**/template.html -text
+
+# 插画是二进制，禁止任何转换
+templates/**/*.jpg binary
+templates/**/*.png binary
+
+# 生成的规格文件保持 LF，便于跨平台 diff
+templates/**/theme.json text eol=lf
+templates/**/manifest.json text eol=lf
+templates/registry.json text eol=lf
