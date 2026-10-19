@@ -27,11 +27,8 @@ def check(name, cond, detail=""):
 
 
 def sha256_file(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(65536), b""):
-            h.update(chunk)
-    return h.hexdigest()
+    """与 extract.sha256_file 一致：统一按 LF 计算，避免 CRLF 检出导致误报"""
+    return extract.sha256_file(path)
 
 
 slugs = list(extract.TEMPLATES)
